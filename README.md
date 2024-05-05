@@ -113,11 +113,11 @@ Under the hood, the five different commands invoke a specific workflow or sequen
 * **F) Extract downloaded binaries** - Extracts the files from a downloaded archive to the temp directory (`/tmp/docker_update`). 
 * **G) Restore Docker binaries** - Restores the Docker binaries in `/var/packages/Docker/target/usr/bin/*` with the binaries extracted from a backup archive.
 * **H) Install Docker binaries** - Installs downloaded and extracted Docker binaries (including Docker Compose) to the folder `/var/packages/Docker/target/usr/bin/`.
-* **I) Update log driver** - Replaces Synology's log driver with a default log driver `json-file` to improve compatibility. The configuration is updated at `/var/packages/Docker/etc/dockerd.json`
+* **I) Update log driver** - Replaces Synology's log driver with a default log driver `local` to improve compatibility while optimizing writes and limiting log file growth. The configuration is updated at `/var/packages/Docker/etc/dockerd.json`
 * **J) Restore log driver** - Restores the log driver (`/var/packages/Docker/etc/dockerd.json`) from the configuration within a backup archive.
 * **K) Update Docker script** - Updates Synology's `start-stop-status` script for Docker to enable IP forwarding. This ensures containers can be properly reached in bridge networking mode. The script is updated at the location `/var/packages/Docker/scripts/start-stop-status`.
 * **L) Restore Docker script** - Restores the `start-stop-status` script (`/var/packages/Docker/scripts/start-stop-status`) from the file within a backup archive.
-* **M) Start Docker daemon** - Starts the Docker daemon by invoking `synoservicectl --start pkgctl-Docker`.
+* **M) Start Docker daemon** - Starts the Docker daemon by invoking `synoservicectl --start pkgctl-Docker` (or `synopkg start ContainerManager` on DSM 7).
 * **N) Clean temp folder** - Removes files from the temp directory (`/tmp/docker_update`). The temporary files are created when extracting a downloaded archive or extracting a backup.
 
 
