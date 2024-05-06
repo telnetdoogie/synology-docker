@@ -14,6 +14,19 @@
 #======================================================================================================================
 
 #======================================================================================================================
+# Displays error message on console and terminates with non-zero error.
+#======================================================================================================================
+# Arguments:
+#   $1 - Error message to display.
+# Outputs:
+#   Writes error message to stderr, non-zero exit code.
+#======================================================================================================================
+terminate() {
+    printf "${RED}${BOLD}%s${NC}\n" "ERROR: $1"
+    exit 1
+}
+
+#======================================================================================================================
 # Constants
 #======================================================================================================================
 readonly RED='\e[31m' # Red color
@@ -27,9 +40,13 @@ readonly DOWNLOAD_DOCKER="https://download.docker.com/linux/static/stable/${CPU_
 readonly DOWNLOAD_GITHUB='https://github.com/docker/compose'
 readonly GITHUB_API_COMPOSE='https://api.github.com/repos/docker/compose/releases/latest'
 readonly SYNO_DOCKER_SERV_NAME6='pkgctl-Docker'
-readonly SYNO_DOCKER_SERV_NAME7='Docker'
+readonly SYNO_DOCKER_SERV_NAME7='ContainerManager'
 readonly SYNO_SERVICE_TIMEOUT='5m'
-readonly SYNO_DOCKER_DIR='/var/packages/Docker'
+[ -d "/var/packages/ContainerManager" ] && readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager'
+[ -d "/var/packages/Docker" ] && readonly SYNO_DOCKER_DIR='/var/packages/Docker'
+if [ -z "$SYNO_DOCKER_DIR" ]; then
+    terminate "Docker (or ContainerManager) folder was not found."
+fi
 readonly SYNO_DOCKER_BIN_PATH="${SYNO_DOCKER_DIR}/target/usr"
 readonly SYNO_DOCKER_BIN="${SYNO_DOCKER_BIN_PATH}/bin"
 readonly SYNO_DOCKER_SCRIPT_PATH="${SYNO_DOCKER_DIR}/scripts"
@@ -38,7 +55,11 @@ readonly SYNO_DOCKER_JSON_PATH="${SYNO_DOCKER_DIR}/etc"
 readonly SYNO_DOCKER_JSON="${SYNO_DOCKER_JSON_PATH}/dockerd.json"
 readonly SYNO_DOCKER_JSON_CONFIG="{
     \"data-root\" : \"$SYNO_DOCKER_DIR/target/docker\",
-    \"log-driver\" : \"json-file\",
+    \"log-driver\" : \"local\",
+    \"log-opts\" : {
+		\"max-size\" : \"10m\",
+		\"max-file\" : \"3\"
+	},
     \"registry-mirrors\" : [],
     \"group\": \"administrators\"
 }"
@@ -101,19 +122,6 @@ usage() {
     echo "  update                 Update Docker and Docker Compose to target version (creates backup first)"
     echo "  validate               Validates versions available for update"
     echo
-}
-
-#======================================================================================================================
-# Displays error message on console and terminates with non-zero error.
-#======================================================================================================================
-# Arguments:
-#   $1 - Error message to display.
-# Outputs:
-#   Writes error message to stderr, non-zero exit code.
-#======================================================================================================================
-terminate() {
-    printf "${RED}${BOLD}%s${NC}\n" "ERROR: $1"
-    exit 1
 }
 
 #======================================================================================================================
