@@ -62,6 +62,13 @@ The project uses [Docker][docker_url], a lightweight virtualization application.
 
 * **SynoCommunity/Git is required** - *Synology-Docker* needs the [Git package](https://synocommunity.com/package/git) from [SynoCommunity](https://synocommunity.com) installed on your NAS. Install Git on your NAS by adding the SynoCommunity package repository (described [here](https://synocommunity.com/#easy-install)) and installing the Git package in DSM via `Package Center ➡ Community ➡ Git`.
 
+:warning: It's highly recommended that you are using docker-compose or a container manager like portainer for your containers, since post upgrade, you will need to stop, remove, and rebuild / restart each container. 
+`docker-compose` makes this very simple. If you're using only `docker run` commands to start containers, you'll need to remove and rebuild containers from the original commands after upgrade. 
+This is because when creating / starting a container, the logging mechanism used at time of creation is persisted beyond simple start / stops of a container. To see this on an existing container 
+```console
+docker inspect {containername} --format '{{json .HostConfig.LogConfig }}'
+``` 
+
 ## Deployment
 Deployment of *Synology-Docker* is a matter of cloning the GitHub repository. Login to your NAS terminal via SSH first. Assuming you are in the working folder of your choice, clone the repository files. Git automatically creates a new folder `synology-docker` and copies the files to this directory. Then change your current folder to simplify the execution of the shell script.
 
