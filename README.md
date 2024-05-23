@@ -1,5 +1,7 @@
 # synology-docker
-Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) - awaiting merge
+| :page_facing_up: Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) - awaiting merge |
+| --- |
+
 
 <!-- Tagline -->
 <p align="center">
