@@ -90,10 +90,12 @@ Because this upgrade modifies the default logger for docker, stopping (removing)
 
 Stopping all the containers prior to the upgrade / restore will also make the upgrade a lot faster, since the service stop and restart normally has to do the work of stopping and starting all containers.
 
-For a convenient way of enumerating all of the running *compose* projects (you might see some duplicates if you're using compose projects with multiple containers), you can execute the following:
+For a convenient way of enumerating all of the running *compose* projects, you can execute the following:
 
 ```console
-for c in `docker ps -q`; do docker inspect $c --format '{{index .Config.Labels "com.docker.compose.project.config_files"}}' ; done
+for c in `docker ps -q`; do \
+    docker inspect $c --format '{{index .Config.Labels "com.docker.compose.project.config_files"}}' ; done \
+    | sort -u
 ```
 
 ### Commands
