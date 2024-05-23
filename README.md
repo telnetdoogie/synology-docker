@@ -72,14 +72,6 @@ $ cd synology-docker
 
 <!-- TODO: TEST CHMOD -->
 
-
-## Usage
-*Synology-Docker* requires `sudo` rights. Use the following command to invoke *Synology-Docker* from the command line.
-
-```console
-$ sudo ./syno_docker_update.sh [OPTIONS] COMMAND
-```
-
 ## Preparation before upgrade
 If you're using *compose* for your containers, I highly recommend that before you run the upgrade (or restore, if you're going back to the original version) you go through and stop each running container.
 ```console
@@ -97,6 +89,15 @@ for c in `docker ps -q`; do \
     docker inspect $c --format '{{index .Config.Labels "com.docker.compose.project.config_files"}}' ; done \
     | sort -u
 ```
+
+## Usage
+*Synology-Docker* requires `sudo` rights. Use the following command to invoke *Synology-Docker* from the command line.
+
+```console
+$ sudo ./syno_docker_update.sh [OPTIONS] COMMAND
+```
+
+
 
 ### Commands
 *Synology-Docker* supports the following commands. 
