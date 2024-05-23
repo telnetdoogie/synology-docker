@@ -68,6 +68,7 @@ $ cd synology-docker
 ```
 
 <!-- TODO: TEST CHMOD -->
+
 ## Preparation before upgrade
 If you're using *compose* for your containers, I highly recommend that before you run the upgrade (or restore, if you're going back to the original version) you go through and stop each running container.
 ```console
@@ -81,10 +82,15 @@ Stopping all the containers prior to the upgrade / restore will also make the up
 For a convenient way of enumerating all of the running *compose* projects, you can execute the following:
 
 ```console
-for c in `docker ps -q`; do \
-    docker inspect $c --format '{{index .Config.Labels "com.docker.compose.project.config_files"}}' ; done \
-    | sort -u
+for c in $(docker ps -q); do \
+    docker inspect "$c" --format \
+    '{{.Name}} {{if index .Config.Labels "com.docker.compose.project.config_files"}}{{index .Config.Labels "com.docker.compose.project.config_files"}}{{else}}!---not_managed_by_compose---!{{end}}'; \
+done \
+| sort -u -t " " -k 2 \
+| column -t -N Container,Compose_Location
 ```
+...if you see a container with `!---not_managed_by_compose---!` you'll need to make sure you know how to recreate this container after the upgrade.
+
 
 ## Usage
 *Synology-Docker* requires `sudo` rights. Use the following command to invoke *Synology-Docker* from the command line.
