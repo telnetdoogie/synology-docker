@@ -62,9 +62,9 @@ The project uses [Docker][docker_url], a lightweight virtualization application.
 
 * **SynoCommunity/Git is required** - *Synology-Docker* needs the [Git package](https://synocommunity.com/package/git) from [SynoCommunity](https://synocommunity.com) installed on your NAS. Install Git on your NAS by adding the SynoCommunity package repository (described [here](https://synocommunity.com/#easy-install)) and installing the Git package in DSM via `Package Center ➡ Community ➡ Git`.
 
-:warning: It's highly recommended that you are using docker-compose or a container manager like portainer for your containers, since post upgrade, you will need to stop, remove, and rebuild / restart each container. 
-`docker-compose` makes this very simple. If you're using only `docker run` commands to start containers, you'll need to remove and rebuild containers from the original commands after upgrade. 
-This is because when creating / starting a container, the logging mechanism used at time of creation is persisted beyond simple start / stops of a container. To see this on an existing container 
+:warning: It's highly recommended that you are using docker-compose or a container manager like portainer for your containers, since post upgrade, you will need to stop, remove, and rebuild / restart each container 
+due to the change in default logging mechanism. `docker-compose` makes this all very simple. If you're using only `docker run` commands to start containers, you'll need to remove and rebuild containers **from the original commands** after upgrade. 
+This is because when creating / starting a container, the logging mechanism used at time of creation is persisted beyond simple start / stops of a container. To see an example of this on an existing container, run:
 ```console
 docker inspect {containername} --format '{{json .HostConfig.LogConfig }}'
 ``` 
