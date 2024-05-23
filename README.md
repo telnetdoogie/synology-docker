@@ -153,9 +153,8 @@ This [link][known_issues] contains an overview of known issues, including availa
     <img src="https://img.shields.io/github/license/markdumay/synology-docker.svg" />
 </a>
 
-Copyright © [Mark Dumay][blog]
-
-
+## Fork Origin
+Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) - awaiting merge
 
 <!-- MARKDOWN PUBLIC LINKS -->
 [synology_url]: https://www.synology.com
