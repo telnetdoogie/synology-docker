@@ -1,4 +1,5 @@
 # synology-docker
+Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) - awaiting merge
 
 <!-- Tagline -->
 <p align="center">
@@ -9,8 +10,8 @@
 
 <!-- Badges -->
 <p align="center">
-    <a href="https://github.com/markdumay/synology-docker/commits/master" alt="Last commit">
-        <img src="https://img.shields.io/github/last-commit/markdumay/synology-docker.svg" />
+    <a href="https://github.com/telnetdoogie/synology-docker/commits/master" alt="Last commit">
+        <img src="https://img.shields.io/github/last-commit/telnetdoogie/synology-docker.svg" />
     </a>
     <a href="https://github.com/markdumay/synology-docker/issues" alt="Issues">
         <img src="https://img.shields.io/github/issues/markdumay/synology-docker.svg" />
@@ -147,9 +148,6 @@ This [link][known_issues] contains an overview of known issues, including availa
 ## Credits
 *Synology-Docker* is inspired by this [gist][gist_mikado8231] from Mikado8231.
 
-## Donate
-<a href="https://www.buymeacoffee.com/markdumay" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;"></a>
-
 ## License
 <a href="https://github.com/markdumay/synology-docker/blob/master/LICENSE" alt="License">
     <img src="https://img.shields.io/github/license/markdumay/synology-docker.svg" />
@@ -175,11 +173,3 @@ Copyright © [Mark Dumay][blog]
 [portainer]: https://www.portainer.io
 [known_issues]: https://github.com/markdumay/synology-docker/issues/42
 [macvlan]: [https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/]
-
-
-<!-- MARKDOWN MAINTAINED LINKS -->
-<!-- TODO: add blog link
-[blog]: https://markdumay.com
--->
-[blog]: https://github.com/markdumay
-[repository]: https://github.com/markdumay/synology-docker.git
