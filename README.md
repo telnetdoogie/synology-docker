@@ -76,6 +76,22 @@ $ cd synology-docker
 $ sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 ```
 
+## Preparation before upgrade
+If you're using *compose* for your containers, I highly recommend that before you run the upgrade (or restore, if you're going back to the original version) you go through and stop each running container.
+```console
+$ cd /volume1/docker/{my_container}
+$ docker-compose down
+```
+Because this upgrade modifies the default logger for docker, stopping (removing) and re-starting each container is required, since the logging mechanism is persisted during a compose docker build / start. You don't HAVE to do this before the upgrade, however if you don't, you'll get errors related to the logger for your containers, and will anyway have to stop and start each container / stack after the upgrade anyway.
+
+Stopping all the containers prior to the upgrade / restore will also make the upgrade a lot faster, since the service stop and restart normally has to do the work of stopping and starting all containers.
+
+For a convenient way of enumerating all of the running *compose* projects (you might see some duplicates if you're using compose projects with multiple containers), you can execute the following:
+
+```console
+for c in `docker ps -q`; do docker inspect $c --format '{{index .Config.Labels "com.docker.compose.project.config_files"}}' ; done
+```
+
 ### Commands
 *Synology-Docker* supports the following commands. 
 
