@@ -75,7 +75,7 @@ If you're using *compose* for your containers, I highly recommend that before yo
 $ cd /volume1/docker/{my_container}
 $ docker-compose down
 ```
-Because this upgrade modifies the default logger for docker, stopping (removing) and re-starting each container is required, since the logging mechanism is persisted during a compose docker build / start. You don't HAVE to do this before the upgrade, however if you don't, you'll get errors related to the logger for your containers, and will anyway have to stop and start each container / stack after the upgrade anyway.
+Because this upgrade modifies the default logger for docker, stopping (removing) and re-starting each container is required, since the logging mechanism is persisted during a compose docker build / start. You don't HAVE to do this before the upgrade, however if you don't, you'll get errors related to the logger for your containers, and will have to stop and start each container / stack after the upgrade anyway.
 
 Stopping all the containers prior to the upgrade / restore will also make the upgrade a lot faster, since the service stop and restart normally has to do the work of stopping and starting all containers.
 
