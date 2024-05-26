@@ -54,7 +54,7 @@ Detailed background information is available on the author's [personal blog][blo
 The project uses [Docker][docker_url], a lightweight virtualization application.
 
 ## Prerequisites
-*Synology-Docker* runs on a Synology NAS with DSM 6 or DSM 7. The script has been tested with a DS918+ running DSM 6.2.4-25556 and DSM 7.0.1-42218. Other prerequisites are:
+*Synology-Docker* runs on a Synology NAS with DSM 6 or DSM 7. The script has been tested with a DS918+ running DSM 6.2.4-25556, DSM 7.0.1-42218, and DSM 7.2.1-69057. Other prerequisites are:
 
 * **SSH admin access is required** - *Synology-Docker* runs as a shell script on the terminal. You can enable SSH access in DSM under `Control Panel ➡ Terminal & SNMP ➡ Terminal`.
 
