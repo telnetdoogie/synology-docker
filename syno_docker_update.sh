@@ -43,7 +43,7 @@ readonly SYNO_SERVICE_TIMEOUT='5m'
 [ -d "/var/packages/ContainerManager" ] && readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager' && \
 	readonly SYNO_DOCKER_SERV_NAME='ContainerManager'
 [ -d "/var/packages/Docker" ] && readonly SYNO_DOCKER_DIR='/var/packages/Docker' && \
-	readonly SYNO_DOCKER_SERV_NAME='Docker'
+	readonly SYNO_DOCKER_SERV_NAME='pkgctl-Docker'
 if [ -z "$SYNO_DOCKER_DIR" ]; then
     terminate "Docker (or ContainerManager) folder was not found."
 fi
