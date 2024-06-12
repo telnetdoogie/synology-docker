@@ -39,11 +39,11 @@ readonly CPU_ARCH='x86_64'
 readonly DOWNLOAD_DOCKER="https://download.docker.com/linux/static/stable/${CPU_ARCH}"
 readonly DOWNLOAD_GITHUB='https://github.com/docker/compose'
 readonly GITHUB_API_COMPOSE='https://api.github.com/repos/docker/compose/releases/latest'
-readonly SYNO_DOCKER_SERV_NAME6='pkgctl-Docker'
-readonly SYNO_DOCKER_SERV_NAME7='ContainerManager'
 readonly SYNO_SERVICE_TIMEOUT='5m'
-[ -d "/var/packages/ContainerManager" ] && readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager'
-[ -d "/var/packages/Docker" ] && readonly SYNO_DOCKER_DIR='/var/packages/Docker'
+[ -d "/var/packages/ContainerManager" ] && readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager' && \
+	readonly SYNO_DOCKER_SERV_NAME='ContainerManager'
+[ -d "/var/packages/Docker" ] && readonly SYNO_DOCKER_DIR='/var/packages/Docker' && \
+	readonly SYNO_DOCKER_SERV_NAME='pkgctl-Docker'
 if [ -z "$SYNO_DOCKER_DIR" ]; then
     terminate "Docker (or ContainerManager) folder was not found."
 fi
@@ -621,20 +621,20 @@ execute_stop_syno() {
     if [ "${stage}" = 'false' ] ; then
         case "${dsm_major_version}" in
             "6")
-                syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME6}" | grep running -o)
+                syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME}" | grep running -o)
                 if [ "${syno_status}" = 'running' ] ; then
-                    timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synoservicectl --stop "${SYNO_DOCKER_SERV_NAME6}"
-                    syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME6}" | grep stop -o)
+                    timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synoservicectl --stop "${SYNO_DOCKER_SERV_NAME}"
+                    syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME}" | grep stop -o)
                     if [ "${syno_status}" != 'stop' ] ; then
                         terminate "Could not stop Docker daemon"
                     fi
                 fi
                 ;;
             "7")
-                syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME7}" | grep started -o)
+                syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME}" | grep started -o)
                 if [ "${syno_status}" = 'started' ] ; then
-                    timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synopkg stop "${SYNO_DOCKER_SERV_NAME7}"
-                    syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME7}" | grep stopped -o)
+                    timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synopkg stop "${SYNO_DOCKER_SERV_NAME}"
+                    syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME}" | grep stopped -o)
                     if [ "${syno_status}" != 'stopped' ] ; then
                         terminate "Could not stop Docker daemon"
                     fi
@@ -940,9 +940,9 @@ execute_start_syno() {
     if [ "${stage}" = 'false' ] ; then
         case "${dsm_major_version}" in
             "6")
-                timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synoservicectl --start "${SYNO_DOCKER_SERV_NAME6}"
+                timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synoservicectl --start "${SYNO_DOCKER_SERV_NAME}"
 
-                syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME6}" | grep running -o)
+                syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME}" | grep running -o)
                 if [ "${syno_status}" != 'running' ] ; then
                     if [ "${force}" != 'true' ] ; then
                         terminate "Could not bring Docker Engine back online"
@@ -952,9 +952,9 @@ execute_start_syno() {
                 fi
                 ;;
             "7")
-                timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synopkg start "${SYNO_DOCKER_SERV_NAME7}"
+                timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synopkg start "${SYNO_DOCKER_SERV_NAME}"
 
-                syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME7}" | grep started -o)
+                syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME}" | grep started -o)
                 if [ "${syno_status}" != 'started' ] ; then
                     if [ "${force}" != 'true' ] ; then
                         terminate "Could not bring Docker Engine back online"
