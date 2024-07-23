@@ -85,7 +85,7 @@ Stopping all the containers prior to the upgrade / restore will also make the up
 For a convenient way of enumerating all of the running compose projects, run the script:
 
 ```console
-syno_docker_list_containers.sh
+./syno_docker_list_containers.sh
 ```
 
 ...if you see a container listed with !---not_managed_by_compose---! you'll need to make sure you know how to recreate this container after the upgrade.
