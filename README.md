@@ -66,8 +66,8 @@ The project uses [Docker][docker_url], a lightweight virtualization application.
 Deployment of *Synology-Docker* is a matter of cloning the GitHub repository. Login to your NAS terminal via SSH first. Assuming you are in the working folder of your choice, clone the repository files. Git automatically creates a new folder `synology-docker` and copies the files to this directory. Then change your current folder to simplify the execution of the shell script.
 
 ```console
-$ git clone https://github.com/telnetdoogie/synology-docker.git
-$ cd synology-docker
+git clone https://github.com/telnetdoogie/synology-docker.git
+cd synology-docker
 ```
 
 <!-- TODO: TEST CHMOD -->
@@ -75,14 +75,18 @@ $ cd synology-docker
 ## Preparation before upgrade
 If you're using *compose* for your containers, I highly recommend that before you run the upgrade (or restore, if you're going back to the original version) you go through and stop each running container.
 ```console
-$ cd /volume1/docker/{my_container}
-$ docker-compose down
+cd /volume1/docker/{my_container}
+docker-compose down
 ```
 Because this upgrade modifies the default logger for docker, stopping (removing) and re-starting each container is required, since the logging mechanism is persisted during a compose docker build / start. You don't HAVE to do this before the upgrade, however if you don't, you'll get errors related to the logger for your containers, and will have to stop and start each container / stack after the upgrade anyway.
 
 Stopping all the containers prior to the upgrade / restore will also make the upgrade a lot faster, since the service stop and restart normally has to do the work of stopping and starting all containers.
 
-For a convenient way of enumerating all of the running compose projects, run the script syno_docker_list_containers.sh
+For a convenient way of enumerating all of the running compose projects, run the script:
+
+```console
+syno_docker_list_containers.sh
+```
 
 ...if you see a container listed with !---not_managed_by_compose---! you'll need to make sure you know how to recreate this container after the upgrade.
 
@@ -90,7 +94,7 @@ For a convenient way of enumerating all of the running compose projects, run the
 *Synology-Docker* requires `sudo` rights. Use the following command to invoke *Synology-Docker* from the command line.
 
 ```console
-$ sudo ./syno_docker_update.sh [OPTIONS] COMMAND
+sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 ```
 
 
