@@ -44,6 +44,9 @@
 | :warning: The repository 'Synology-Docker' is not supported by Synology and can potentially lead to malfunctioning of your NAS. Use this script at your own risk. Please keep a backup of your files. |
 | --- |
 
+| :exclamation: Portainer Users - Portainer currently has an [issue](https://github.com/portainer/portainer/issues/10462) where it persists the first-used logging driver alongside container definitions. You may have to completely recreate (or duplicate and edit) containers created in portainer to use the `local` log driver. It would be best to do that will all of your containers BEFORE running this update. Portainer has created some challenges for users migrating from one log driver to another. You may need to spend more time re-creating containers after this update than if you were using compose.
+| --- |
+
 [Synology][synology_url] is a popular manufacturer of Network Attached Storage (NAS) devices. It provides a web-based user interface called Disk Station Manager (DSM). Synology also supports Docker on selected [models][synology_docker]. Docker is a lightweight virtualization application that gives you the ability to run containers directly on your NAS. The add-on package provided by Synology to install Docker is typically a version behind on the latest available version from Docker. *Synology-Docker* is a POSIX-compliant shell script to update both the Docker Engine and Docker Compose on your NAS to the latest version or a specified version.
 
 <!-- TODO: add tutorial deep-link 
