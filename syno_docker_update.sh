@@ -39,7 +39,6 @@ readonly CPU_ARCH='x86_64'
 readonly DOWNLOAD_DOCKER="https://download.docker.com/linux/static/stable/${CPU_ARCH}"
 readonly DOWNLOAD_GITHUB='https://github.com/docker/compose'
 readonly GITHUB_API_COMPOSE='https://api.github.com/repos/docker/compose/releases/latest'
-readonly SYNO_SERVICE_TIMEOUT='5m'
 [ -d "/var/packages/ContainerManager" ] && readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager' && \
 	readonly SYNO_DOCKER_SERV_NAME='ContainerManager'
 [ -d "/var/packages/Docker" ] && readonly SYNO_DOCKER_DIR='/var/packages/Docker' && \
@@ -64,6 +63,13 @@ readonly SYNO_DOCKER_JSON_CONFIG="{
     \"group\": \"administrators\"
 }"
 readonly SYNO_DOCKER_SCRIPT_FORWARDING='# ensure IP forwarding\n\t\tsudo iptables -P FORWARD ACCEPT\n'
+readonly SYNO_SERVICE_STOP_TIMEOUT='5m'
+RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | wc -l 2>/dev/null || echo 0)
+if [ "$RUNNING_CONTAINERS" -gt 5 ]; then
+    readonly SYNO_SERVICE_START_TIMEOUT=$(echo "$RUNNING_CONTAINERS * 1.5" | bc)m
+else
+	readonly SYNO_SERVICE_START_TIMEOUT='5m'
+fi
 
 
 #======================================================================================================================
@@ -623,7 +629,7 @@ execute_stop_syno() {
             "6")
                 syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME}" | grep running -o)
                 if [ "${syno_status}" = 'running' ] ; then
-                    timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synoservicectl --stop "${SYNO_DOCKER_SERV_NAME}"
+                    timeout --foreground "${SYNO_SERVICE_STOP_TIMEOUT}" synoservicectl --stop "${SYNO_DOCKER_SERV_NAME}"
                     syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME}" | grep stop -o)
                     if [ "${syno_status}" != 'stop' ] ; then
                         terminate "Could not stop Docker daemon"
@@ -633,7 +639,7 @@ execute_stop_syno() {
             "7")
                 syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME}" | grep started -o)
                 if [ "${syno_status}" = 'started' ] ; then
-                    timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synopkg stop "${SYNO_DOCKER_SERV_NAME}"
+                    timeout --foreground "${SYNO_SERVICE_STOP_TIMEOUT}" synopkg stop "${SYNO_DOCKER_SERV_NAME}"
                     syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME}" | grep stopped -o)
                     if [ "${syno_status}" != 'stopped' ] ; then
                         terminate "Could not stop Docker daemon"
@@ -935,12 +941,12 @@ execute_restore_script() {
 #   Started Docker daemon, or a non-zero exit code if the start failed or timed out.
 #======================================================================================================================
 execute_start_syno() {
-    print_status "Starting Docker service"
-
+    print_status "Starting Docker service - May take a while to restart ${RUNNING_CONTAINERS} containers... (up to ${SYNO_SERVICE_START_TIMEOUT})"
+}
     if [ "${stage}" = 'false' ] ; then
         case "${dsm_major_version}" in
             "6")
-                timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synoservicectl --start "${SYNO_DOCKER_SERV_NAME}"
+                timeout --foreground "${SYNO_SERVICE_START_TIMEOUT}" synoservicectl --start "${SYNO_DOCKER_SERV_NAME}"
 
                 syno_status=$(synoservicectl --status "${SYNO_DOCKER_SERV_NAME}" | grep running -o)
                 if [ "${syno_status}" != 'running' ] ; then
@@ -952,7 +958,7 @@ execute_start_syno() {
                 fi
                 ;;
             "7")
-                timeout --foreground "${SYNO_SERVICE_TIMEOUT}" synopkg start "${SYNO_DOCKER_SERV_NAME}"
+                timeout --foreground "${SYNO_SERVICE_START_TIMEOUT}" synopkg start "${SYNO_DOCKER_SERV_NAME}"
 
                 syno_status=$(synopkg status "${SYNO_DOCKER_SERV_NAME}" | grep started -o)
                 if [ "${syno_status}" != 'started' ] ; then
