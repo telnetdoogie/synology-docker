@@ -44,6 +44,9 @@
 | :warning: The repository 'Synology-Docker' is not supported by Synology and can potentially lead to malfunctioning of your NAS. Use this script at your own risk. Please keep a backup of your files. |
 | --- |
 
+| :warning: If you're using the Nvidia driver on your synology, you will need to re-start the Nvidia driver, or re-run `nvidia-ctk runtime configure` to re-add the nvidia runtime after each run of this script in order for the driver to get re-added to docker. |
+| --- |
+
 | :exclamation: Portainer Users - Portainer currently has an [issue](https://github.com/portainer/portainer/issues/10462) where it persists the first-used logging driver alongside container definitions. You may have to completely recreate (or duplicate and edit) containers created in portainer to use the `local` log driver. It would be best to do that with all of your containers BEFORE running this update. Portainer has created some challenges for users migrating from one log driver to another. You may need to spend more time re-creating containers after this update than if you were using compose.
 | --- |
 
