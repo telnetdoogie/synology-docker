@@ -2,10 +2,12 @@
 
 # Store container information in an array
 containers_info=()
+readonly NOT_COMPOSE="!---not_managed_by_compose---!"
+readonly MAYBE_PORTAINER="!---maybe_managed_by_portainer---!"
 
 # Get the list of containers and their compose locations
 for c in $(docker ps -q); do
-    container_info=$(docker inspect "$c" --format '{{.Name}} {{if index .Config.Labels "com.docker.compose.project.config_files"}}{{index .Config.Labels "com.docker.compose.project.config_files"}}{{else}}!---not_managed_by_compose---!{{end}}')
+    container_info=$(docker inspect "$c" --format "{{.Name}} {{if index .Config.Labels \"com.docker.compose.project.config_files\"}}{{index .Config.Labels \"com.docker.compose.project.config_files\"}}{{else}}${NOT_COMPOSE}{{end}}")
     containers_info+=("$container_info")
 done
 
@@ -30,6 +32,9 @@ printf "%-${max_container_length}s  %s\n" "$(printf '%*s' "${max_container_lengt
 for info in "${sorted_containers_info[@]}"; do
     container=$(echo "$info" | awk '{print $1}')
     location=$(echo "$info" | sed -e 's/^[^ ]* //')
+	if [ "$location" != "$NOT_COMPOSE" ] && [ ! -f $location ];then
+		location="${MAYBE_PORTAINER}"
+	fi
     printf "%-${max_container_length}s  %s\n" "$container" "$location"
 done
 
