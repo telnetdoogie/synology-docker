@@ -942,7 +942,7 @@ execute_restore_script() {
 #======================================================================================================================
 execute_start_syno() {
     print_status "Starting Docker service - May take a while to restart ${RUNNING_CONTAINERS} containers... (up to ${SYNO_SERVICE_START_TIMEOUT})"
-}
+
     if [ "${stage}" = 'false' ] ; then
         case "${dsm_major_version}" in
             "6")
