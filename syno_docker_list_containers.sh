@@ -27,8 +27,8 @@ done
 # Print the header
 printf "%-${max_container_length}s  %s\n" "Container" "Compose_Location"
 printf "%-${max_container_length}s  %-${max_location_length}s\n" \
-  "$(printf '%*s' "${max_container_length}" | tr ' ' '-')" \
-  "$(printf '%*s' "${max_location_length}" | tr ' ' '-')"
+  "$(printf '%*s' "${max_container_length}" '' | tr ' ' '-')" \
+  "$(printf '%*s' "${max_location_length}" '' | tr ' ' '-')"
 
 
 # Print the sorted container information
