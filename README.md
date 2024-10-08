@@ -1,5 +1,5 @@
 # synology-docker
-| :page_facing_up: Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) - awaiting merge |
+| :page_facing_up: Originally forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) |
 | --- |
 
 
@@ -103,8 +103,6 @@ For a convenient way of enumerating all of the running compose projects, run the
 sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 ```
 
-
-
 ### Commands
 *Synology-Docker* supports the following commands. 
 
@@ -162,14 +160,8 @@ Under the hood, the five different commands invoke a specific workflow or sequen
 | `-p`        | `--path`    |            | Path of the backup (defaults to current directory) |
 | `-s`        | `--stage`   |            | Stage only, do not replace binaries or the configuration of log driver |
 
-### Known Issues
-This [link][known_issues] contains an overview of known issues, including available workarounds.
-
 ## Contributing
-1. Clone the repository and create a new branch 
-    ```console
-    $ git checkout https://github.com/markdumay/synology-docker.git -b name_for_new_branch
-    ```
+1. Fork the repository
 2. Make and test the changes
 3. Submit a Pull Request with a comprehensive description of the changes
 
@@ -181,22 +173,7 @@ This [link][known_issues] contains an overview of known issues, including availa
     <img src="https://img.shields.io/github/license/markdumay/synology-docker.svg" />
 </a>
 
-## Fork Origin
-Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) - awaiting merge
-
 <!-- MARKDOWN PUBLIC LINKS -->
 [synology_url]: https://www.synology.com
 [synology_docker]: https://www.synology.com/en-us/dsm/packages/Docker
 [gist_mikado8231]: https://gist.github.com/Mikado8231/bf207a019373f9e539af4d511ae15e0d
-
-[acmesh_deploy]: https://github.com/acmesh-official/acme.sh/wiki/deployhooks
-[acmesh_url]: https://acme.sh
-[crontab_guru]: https://crontab.guru
-[docker_url]: https://docker.com
-[luka_wildcard]: https://www.blackvoid.club/lets-encrypt-docker-wild-card-certs/
-[markus_renew]: https://lippertmarkus.com/2020/03/14/synology-le-dns-auto-renew/
-[swarm_init]: https://docs.docker.com/engine/reference/commandline/swarm_init/
-[xfelix_letsencrypt]: https://www.xfelix.com/2017/06/synology-letsencrypt-dns-01-cert-issue-and-install/
-[portainer]: https://www.portainer.io
-[known_issues]: https://github.com/markdumay/synology-docker/issues/42
-[macvlan]: [https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/]
