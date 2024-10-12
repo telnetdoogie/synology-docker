@@ -94,7 +94,10 @@ For a convenient way of enumerating all of the running compose projects, run the
 ./syno_docker_list_containers.sh
 ```
 
-...if you see a container listed with !---not_managed_by_compose---! you'll need to make sure you know how to recreate this container after the upgrade.
+...if you see a container listed with **!---not_managed_by_compose---!** you'll need to make sure you know how to:
+1. Remove this container
+1. Recreate this container after the upgrade (which will default to the new logging driver)
+The `syno_docker_list_containers.sh` script will attempt to make a suggestion about how to re-create the container, however if you have the original script or command, you should use what you know. The script may not be 100% correct.
 
 ## Usage
 *Synology-Docker* requires `sudo` rights. Use the following command to invoke *Synology-Docker* from the command line.
