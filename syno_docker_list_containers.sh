@@ -30,7 +30,7 @@ printf "%-${max_container_length}s  %-${max_location_length}s\n" \
   "$(printf '%*s' "${max_container_length}" '' | tr ' ' '-')" \
   "$(printf '%*s' "${max_location_length}" '' | tr ' ' '-')"
 
-
+docker_managed=()
 # Print the sorted container information
 for info in "${sorted_containers_info[@]}"; do
     container=$(echo "$info" | awk '{print $1}')
@@ -38,6 +38,28 @@ for info in "${sorted_containers_info[@]}"; do
 	if [ "$location" != "$NOT_COMPOSE" ] && [ ! -f $location ];then
 		location="${MAYBE_PORTAINER}"
 	fi
+	if [ "$location" == "$NOT_COMPOSE" ]; then
+		docker_managed+=("$container")
+	fi
     printf "%-${max_container_length}s  %s\n" "$container" "$location"
+done
+
+if [ ${#my_array[@]} -gt 0 ]; then
+	# There are containers not managed by compose nor portainer.
+	# Provide some clues on how to restart those containers.
+	echo
+	echo "These containers were started with docker commands. Here are some clues on how to recreate them"
+	echo "...this is a best guess and may not be 100% accurate."
+	echo
+	for container in "${docker_managed[@]}"; do
+		echo "Container: ${container}"
+		echo "Recreate command:"
+		echo
+	done	
+fi
+
+echo "docker managed:"
+for container in "${docker_managed[@]}"; do
+	echo $container
 done
 
