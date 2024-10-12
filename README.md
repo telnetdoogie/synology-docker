@@ -72,7 +72,7 @@ The project uses [Docker][docker_url], a lightweight virtualization application.
 Deployment of *Synology-Docker* is a matter of cloning the GitHub repository. Login to your NAS terminal via SSH first. Assuming you are in the working folder of your choice, clone the repository files. Git automatically creates a new folder `synology-docker` and copies the files to this directory. Then change your current folder to simplify the execution of the shell script.
 
 ```console
-git clone https://github.com/telnetdoogie/synology-docker.git
+git clone git@github.com:telnetdoogie/synology-docker.git
 cd synology-docker
 ```
 
