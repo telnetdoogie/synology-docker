@@ -1,5 +1,5 @@
 # synology-docker
-| :page_facing_up: Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) - awaiting merge |
+| :page_facing_up: Originally forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker |
 | --- |
 
 
@@ -181,22 +181,11 @@ This [link][known_issues] contains an overview of known issues, including availa
     <img src="https://img.shields.io/github/license/markdumay/synology-docker.svg" />
 </a>
 
-## Fork Origin
-Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) - awaiting merge
+## Origin
+Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker)
 
 <!-- MARKDOWN PUBLIC LINKS -->
 [synology_url]: https://www.synology.com
 [synology_docker]: https://www.synology.com/en-us/dsm/packages/Docker
 [gist_mikado8231]: https://gist.github.com/Mikado8231/bf207a019373f9e539af4d511ae15e0d
 
-[acmesh_deploy]: https://github.com/acmesh-official/acme.sh/wiki/deployhooks
-[acmesh_url]: https://acme.sh
-[crontab_guru]: https://crontab.guru
-[docker_url]: https://docker.com
-[luka_wildcard]: https://www.blackvoid.club/lets-encrypt-docker-wild-card-certs/
-[markus_renew]: https://lippertmarkus.com/2020/03/14/synology-le-dns-auto-renew/
-[swarm_init]: https://docs.docker.com/engine/reference/commandline/swarm_init/
-[xfelix_letsencrypt]: https://www.xfelix.com/2017/06/synology-letsencrypt-dns-01-cert-issue-and-install/
-[portainer]: https://www.portainer.io
-[known_issues]: https://github.com/markdumay/synology-docker/issues/42
-[macvlan]: [https://blog.oddbit.com/post/2018-03-12-using-docker-macvlan-networks/]
