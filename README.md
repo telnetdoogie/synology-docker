@@ -1,5 +1,5 @@
 # synology-docker
-| :page_facing_up: Originally forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) |
+| :page_facing_up: Originally forked from [markdumay/synology-docker](http://github.com/markdumay/synology-docker) |
 | --- |
 
 
@@ -182,7 +182,7 @@ This [link][known_issues] contains an overview of known issues, including availa
 </a>
 
 ## Origin
-Forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker)
+Forked from [markdumay/synology-docker](http://github.com/markdumay/synology-docker)
 
 <!-- MARKDOWN PUBLIC LINKS -->
 [synology_url]: https://www.synology.com
