@@ -165,8 +165,10 @@ Under the hood, the five different commands invoke a specific workflow or sequen
 | `-p`        | `--path`    |            | Path of the backup (defaults to current directory) |
 | `-s`        | `--stage`   |            | Stage only, do not replace binaries or the configuration of log driver |
 
+<!--
 ### Known Issues
 This [link][known_issues] contains an overview of known issues, including available workarounds.
+-->
 
 ## Contributing
 1. Fork the repository and create a new branch 
