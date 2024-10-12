@@ -15,14 +15,14 @@
     <a href="https://github.com/telnetdoogie/synology-docker/commits/master" alt="Last commit">
         <img src="https://img.shields.io/github/last-commit/telnetdoogie/synology-docker.svg" />
     </a>
-    <a href="https://github.com/markdumay/synology-docker/issues" alt="Issues">
-        <img src="https://img.shields.io/github/issues/markdumay/synology-docker.svg" />
+    <a href="https://github.com/telnetdoogie/synology-docker/issues" alt="Issues">
+        <img src="https://img.shields.io/github/issues/telnetdoogie/synology-docker.svg" />
     </a>
-    <a href="https://github.com/markdumay/synology-docker/pulls" alt="Pulls">
-        <img src="https://img.shields.io/github/issues-pr-raw/markdumay/synology-docker.svg" />
+    <a href="https://github.com/telnetdoogie/synology-docker/pulls" alt="Pulls">
+        <img src="https://img.shields.io/github/issues-pr-raw/telnetdoogie/synology-docker.svg" />
     </a>
-    <a href="https://github.com/markdumay/synology-docker/blob/master/LICENSE" alt="License">
-        <img src="https://img.shields.io/github/license/markdumay/synology-docker.svg" />
+    <a href="https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE" alt="License">
+        <img src="https://img.shields.io/github/license/telnetdoogie/synology-docker.svg" />
     </a>
 </p>
 
@@ -166,19 +166,16 @@ Under the hood, the five different commands invoke a specific workflow or sequen
 This [link][known_issues] contains an overview of known issues, including available workarounds.
 
 ## Contributing
-1. Clone the repository and create a new branch 
-    ```console
-    $ git checkout https://github.com/markdumay/synology-docker.git -b name_for_new_branch
-    ```
+1. Fork the repository and create a new branch 
 2. Make and test the changes
-3. Submit a Pull Request with a comprehensive description of the changes
+3. Submit a Pull Request with a comprehensive description of the changes back to this repository
 
 ## Credits
 *Synology-Docker* is inspired by this [gist][gist_mikado8231] from Mikado8231.
 
 ## License
-<a href="https://github.com/markdumay/synology-docker/blob/master/LICENSE" alt="License">
-    <img src="https://img.shields.io/github/license/markdumay/synology-docker.svg" />
+<a href="https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE" alt="License">
+    <img src="https://img.shields.io/github/license/telnetdoogie/synology-docker.svg" />
 </a>
 
 ## Origin
