@@ -156,14 +156,14 @@ Under the hood, the five different commands invoke a specific workflow or sequen
 ### Options
 *Synology-Docker* supports the following options. 
 
-| Option      | Alias       | Argument   | Description |
-|-------------|-------------|------------|-------------|
-| `-b`        | `--backup`  | `NAME`     | Name of the backup (defaults to `docker_backup_YYMMDDHHMMSS.tgz`) |
-| `-c`        | `--compose` | `VERSION`  | Specify the Docker Compose target version (defaults to latest available on github.com) |
-| `-d`        | `--docker`  | `VERSION`  | Specify the Docker target version (defaults to latest available on docker.com) |
-| `-f`        | `--force`   |            | Force the update and bypass compatibility check / confirmation check |
-| `-p`        | `--path`    |            | Path of the backup (defaults to current directory) |
-| `-s`        | `--stage`   |            | Stage only, do not replace binaries or the configuration of log driver |
+| Option      | Alias        | Argument   | Description |
+|-------------|--------------|------------|-------------|
+| `-b`        | `--backup`   | `NAME`     | Name of the backup (defaults to `docker_backup_YYMMDDHHMMSS.tgz`) |
+| `-c`        | `--compose`  | `VERSION`  | Specify the Docker Compose target version (defaults to latest available on github.com) |
+| `-d`        | `--docker`   | `VERSION`  | Specify the Docker target version (defaults to latest available on docker.com) |
+| `-f`        | `--force`    |            | Force the update and bypass compatibility check / confirmation check |
+| `-p`        | `--path`     |            | Path of the backup (defaults to current directory) |
+| `-s`        | `--stage`    |            | Stage only, do not replace binaries or the configuration of log driver |
 
 <!--
 ### Known Issues
