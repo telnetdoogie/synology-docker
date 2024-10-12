@@ -10,6 +10,9 @@ fi
 container_id=$1
 container_info=$(docker inspect "$container_id")
 
+# Initialize an empty array for the docker command
+docker_command=()
+
 # Extract the container name
 container_name=$(echo "$container_info" | jq -r '.[0].Name' | sed 's/\///')
 
@@ -23,46 +26,49 @@ host_env=$(printenv | awk -F= '{print $1}' | sort)
 env_vars=$(echo "$container_info" | jq -r '.[0].Config.Env[]' | awk -F= '{print $1}' | sort)
 filtered_env_vars=$(comm -23 <(echo "$env_vars") <(echo "$host_env"))
 
+# Add base docker command to the array
+docker_command+=("docker run -d")
+docker_command+=("--name $container_name")
+
 # Format the remaining environment variables for docker run
-env_options=$(for var in $filtered_env_vars; do
+for var in $filtered_env_vars; do
   value=$(echo "$container_info" | jq -r --arg var "$var" '.[0].Config.Env[] | select(startswith($var))')
-  echo "    -e \"$value\" \\"
-done)
+  if [ -n "$value" ]; then
+    docker_command+=("-e \"$value\"")
+  fi
+done
 
-# Extract port mappings
-ports=$(echo "$container_info" | jq -r '.[0].HostConfig.PortBindings | to_entries[] | "    -p " + .value[0].HostPort + ":" + .key + " \\"')
+# Extract port mappings and add each port to the array individually
+ports=$(echo "$container_info" | jq -r '.[0].HostConfig.PortBindings | to_entries[]? | "-p " + .value[0].HostPort + ":" + .key')
+if [ -n "$ports" ]; then
+  # Add each port as a separate entry
+  while IFS= read -r port; do
+    docker_command+=("$port")
+  done <<< "$ports"
+fi
 
-# Extract volumes
-volumes=$(echo "$container_info" | jq -r '.[0].Mounts[] | "    -v " + .Source + ":" + .Destination + " \\"')
+# Extract volumes and add each volume to the array individually
+volumes=$(echo "$container_info" | jq -r '.[0].Mounts[]? | "-v " + .Source + ":" + .Destination')
+if [ -n "$volumes" ]; then
+  # Add each volume as a separate entry
+  while IFS= read -r volume; do
+    docker_command+=("$volume")
+  done <<< "$volumes"
+fi
 
 # Extract the command used inside the container
 cmd=$(echo "$container_info" | jq -r '.[0].Config.Cmd | join(" ")')
 
-# Generate the docker run command conditionally, excluding empty sections
-docker_command="docker run -d \\
-    --name $container_name \\"
+# Add the image and command
+docker_command+=("$image $cmd")
 
-# Add env_options if not empty
-if [ -n "$env_options" ]; then
-  docker_command+="$env_options"
-fi
-
-# Add ports if not empty
-if [ -n "$ports" ]; then
-  docker_command+="$ports"
-fi
-
-# Add volumes if not empty
-if [ -n "$volumes" ]; then
-  docker_command+="$volumes"
-fi
-
-# Add image and command
-docker_command+="    $image $cmd"
-
-# Remove any double (or more) whitespaces
-cleaned_command=$(echo "$docker_command" | sed 's/  */ /g' | sed 's/\\/\\\n/g') 
-
-# Print the cleaned docker run command
-echo "$cleaned_command"
+# Output the final docker command with a backslash at the end of each line except the last
+echo "${docker_command[0]}"
+for ((i = 1; i < ${#docker_command[@]}; i++)); do
+  if [ $i -lt $((${#docker_command[@]} - 1)) ]; then
+    echo "    ${docker_command[$i]} \\"
+  else
+    echo "    ${docker_command[$i]}"
+  fi
+done
 

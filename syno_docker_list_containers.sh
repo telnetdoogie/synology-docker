@@ -25,6 +25,7 @@ for info in "${sorted_containers_info[@]}"; do
 done
 
 # Print the header
+echo
 printf "%-${max_container_length}s  %s\n" "Container" "Compose_Location"
 printf "%-${max_container_length}s  %-${max_location_length}s\n" \
   "$(printf '%*s' "${max_container_length}" '' | tr ' ' '-')" \
@@ -44,22 +45,22 @@ for info in "${sorted_containers_info[@]}"; do
     printf "%-${max_container_length}s  %s\n" "$container" "$location"
 done
 
-if [ ${#my_array[@]} -gt 0 ]; then
+if [ ${#docker_managed[@]} -gt 0 ]; then
 	# There are containers not managed by compose nor portainer.
 	# Provide some clues on how to restart those containers.
 	echo
-	echo "These containers were started with docker commands. Here are some clues on how to recreate them"
+	echo "The following containers appear to have been started with docker commands."
+	echo "Below are some clues on the command needed to to recreate them"
 	echo "...this is a best guess and may not be 100% accurate."
 	echo
 	for container in "${docker_managed[@]}"; do
+		docker_command=$(./container_recreate.sh $container)
+		echo "----------------------------------------------------"
 		echo "Container: ${container}"
-		echo "Recreate command:"
+		echo "----------------------------------------------------"
+		echo -e "$docker_command"
 		echo
-	done	
+	done
 fi
 
-echo "docker managed:"
-for container in "${docker_managed[@]}"; do
-	echo $container
-done
 
