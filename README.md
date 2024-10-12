@@ -1,5 +1,5 @@
 # synology-docker
-| :page_facing_up: Originally forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker |
+| :page_facing_up: Originally forked from [github.com/markdumay/synology-docker](github.com/markdumay/synology-docker) |
 | --- |
 
 
