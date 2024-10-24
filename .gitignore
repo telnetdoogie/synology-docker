@@ -1,8 +1,8 @@
+# dockerbackup files
+docker_backup*.tgz
+
 # dotenv environment variables file
 .env
-
-# gren configuration
-.grenrc.yml
 
 # Local filesystem files
 .DS_Store
