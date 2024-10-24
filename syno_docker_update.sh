@@ -6,7 +6,7 @@
 # Orig. Author  : Mark Dumay
 # Maintainer    : Jason Hobbs (telnetdoogie)
 # Date          : October 12th, 2024
-# Version       : 2.0.0
+# Version       : 2.1.0
 # Usage         : sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 # Repository    : https://github.com/telnetdoogie/synology-docker.git
 # License       : MIT - https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE
@@ -53,16 +53,6 @@ readonly SYNO_DOCKER_SCRIPT_PATH="${SYNO_DOCKER_DIR}/scripts"
 readonly SYNO_DOCKER_SCRIPT="${SYNO_DOCKER_SCRIPT_PATH}/start-stop-status"
 readonly SYNO_DOCKER_JSON_PATH="${SYNO_DOCKER_DIR}/etc"
 readonly SYNO_DOCKER_JSON="${SYNO_DOCKER_JSON_PATH}/dockerd.json"
-readonly SYNO_DOCKER_JSON_CONFIG="{
-    \"data-root\" : \"$SYNO_DOCKER_DIR/target/docker\",
-    \"log-driver\" : \"local\",
-    \"log-opts\" : {
-		\"max-size\" : \"10m\",
-		\"max-file\" : \"3\"
-	},
-    \"registry-mirrors\" : [],
-    \"group\": \"administrators\"
-}"
 readonly SYNO_DOCKER_SCRIPT_FORWARDING='# ensure IP forwarding\n\t\tsudo iptables -P FORWARD ACCEPT\n'
 readonly SYNO_SERVICE_STOP_TIMEOUT='5m'
 RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | wc -l 2>/dev/null || echo 0)
@@ -127,6 +117,7 @@ usage() {
     echo "  install [PATH]         Update Docker and Docker Compose from files on PATH"
     echo "  restore                Restore Docker and Docker Compose from backup"
     echo "  update                 Update Docker and Docker Compose to target version (creates backup first)"
+    echo "  logger          Update ONLY the logging driver to the local logger (a proactive preparation step)"
     echo "  validate               Validates versions available for update"
     echo
 }
@@ -864,11 +855,7 @@ execute_restore_bin() {
 execute_update_log() {
     print_status "Configuring log driver"
     if [ "${stage}" = 'false' ] && [ "${skip_driver_update}" = 'false' ] ; then
-        log_driver=$(grep "json-file" "${SYNO_DOCKER_JSON}")
-        if [ ! -f "${SYNO_DOCKER_JSON}" ] || [ -z "${log_driver}" ] ; then
-            mkdir -p "${SYNO_DOCKER_JSON_PATH}"
-            echo "${SYNO_DOCKER_JSON_CONFIG}" > "${SYNO_DOCKER_JSON}"
-        fi
+		./syno_docker_switch_logger.sh "${SYNO_DOCKER_JSON}"
     else
         echo "Skipping configuration in STAGE mode or TARGET mode"
     fi
@@ -1055,7 +1042,7 @@ main() {
                 target="$1"
                 validate_target "Invalid target"
                 ;;
-            backup | restore | update | validate )
+            backup | restore | update | logger | validate )
                 command="$1"
                 ;;
             download | install )
@@ -1114,6 +1101,15 @@ main() {
             execute_restore_bin
             execute_restore_log
             execute_restore_script
+            execute_start_syno
+            ;;
+        logger )
+            total_steps=4
+            detect_current_versions
+            execute_prepare
+            execute_stop_syno
+            execute_backup
+            execute_update_log
             execute_start_syno
             ;;
         update )

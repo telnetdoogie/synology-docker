@@ -1,0 +1,23 @@
+{
+  "data-root": "/var/packages/ContainerManager/var/docker",
+  "group": "administrators",
+  "log-driver": "db",
+  "log-opts": {
+	"some-obsolete-setting": "1337"
+  },
+  "registry-mirrors": [],
+  "storage-driver": "btrfs",
+  "default-address-pools": [
+    {
+      "base": "172.16.0.0/12",
+      "size": 24
+    }
+  ],
+  "runtimes": {
+	"nvidia": {
+		"path": "/usr/bin/nvidia-container-runtime",
+		"runtimeArgs": []
+	}
+  }
+}
+

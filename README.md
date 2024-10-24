@@ -118,24 +118,25 @@ sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 | **`install`**  | PATH      | Update Docker and Docker Compose from files on *PATH* |
 | **`restore`**  |           | Restore Docker and Docker Compose from a backup |
 | **`update`**   |           | Update Docker and Docker Compose to a target version (creates a backup first) |
+| **`logger`**   |           | Update ONLY the logging-driver. This is a good first step to remove the dependency on the synology logger |
 
 Under the hood, the five different commands invoke a specific workflow or sequence of steps. The below table shows the workflows and the order of steps for each of the commands.
-| #  | Workflow step               | backup | download | install | restore | update  |
-|----|-----------------------------|--------|----------|---------|---------|---------|
-| A) | Download Docker binary      |        | Step 1   |         |         | Step 1  |
-| B) | Download Compose binary     |        | Step 2   |         |         | Step 2  |
-| C) | Extract files from backup   |        |          |         | Step 1  |         |
-| D) | Stop Docker daemon          | Step 1 |          | Step 1  | Step 2  | Step 3  |
-| E) | Backup current files        | Step 2 |          | Step 2  |         | Step 4  |
-| F) | Extract downloaded binaries |        |          | Step 3  |         | Step 5  |
-| G) | Restore Docker binaries     |        |          |         | Step 3  |         |
-| H) | Install Docker binaries     |        |          | Step 4  |         | Step 6  |
-| I) | Update log driver           |        |          | Step 5  |         | Step 7  |
-| J) | Restore log driver          |        |          |         | Step 4  |         |
-| K) | Update Docker script        |        |          | Step 5  |         | Step 8  |
-| L) | Restore Docker script       |        |          |         | Step 5  |         |
-| M) | Start Docker daemon         | Step 3 |          | Step 6  | Step 6  | Step 9  |
-| N) | Clean temp folder           |        |          |         |         | Step 10 |
+| #  | Workflow step               | backup | download | install | restore | update  | logger |
+|----|-----------------------------|--------|----------|---------|---------|---------|--------|
+| A) | Download Docker binary      |        | Step 1   |         |         | Step 1  |        |
+| B) | Download Compose binary     |        | Step 2   |         |         | Step 2  |        |
+| C) | Extract files from backup   |        |          |         | Step 1  |         |        |
+| D) | Stop Docker daemon          | Step 1 |          | Step 1  | Step 2  | Step 3  | Step 1 |
+| E) | Backup current files        | Step 2 |          | Step 2  |         | Step 4  | Step 2 |
+| F) | Extract downloaded binaries |        |          | Step 3  |         | Step 5  |        |
+| G) | Restore Docker binaries     |        |          |         | Step 3  |         |        |
+| H) | Install Docker binaries     |        |          | Step 4  |         | Step 6  |        |
+| I) | Update log driver           |        |          | Step 5  |         | Step 7  | Step 3 |
+| J) | Restore log driver          |        |          |         | Step 4  |         |        |
+| K) | Update Docker script        |        |          | Step 5  |         | Step 8  |        |
+| L) | Restore Docker script       |        |          |         | Step 5  |         |        |
+| M) | Start Docker daemon         | Step 3 |          | Step 6  | Step 6  | Step 9  | Step 4 |
+| N) | Clean temp folder           |        |          |         |         | Step 10 |        |
 
 * **A) Download Docker binary** - Downloads an archive containing Docker Engine binaries from `https://download.docker.com/linux/static/stable/x86_64/docker-${VERSION}.tgz`. The binaries are compatible with the Intel x86 (64 bit) architecture. Unless a specific version is specified by the `--docker` flag, *Synology-Docker* pulls the latest stable version available.
 * **B) Download Compose binary** - Downloads the Docker Compose binary from `https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-Linux-x86_64`. Unless a specific version is specified by the `--compose` flag, *Synology-Docker* pulls the latest stable version available.
