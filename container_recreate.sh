@@ -27,7 +27,7 @@ env_vars=$(echo "$container_info" | jq -r '.[0].Config.Env[]' | awk -F= '{print 
 filtered_env_vars=$(comm -23 <(echo "$env_vars") <(echo "$host_env"))
 
 # Add base docker command to the array
-docker_command+=("docker run -d")
+docker_command+=("docker run -d \\")
 docker_command+=("--name $container_name")
 
 # Format the remaining environment variables for docker run
@@ -60,7 +60,7 @@ fi
 cmd=$(echo "$container_info" | jq -r '.[0].Config.Cmd | join(" ")')
 
 # Add the image and command
-docker_command+=("$image $cmd")
+docker_command+=("-it $image $cmd")
 
 # Output the final docker command with a backslash at the end of each line except the last
 echo "${docker_command[0]}"
