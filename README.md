@@ -111,14 +111,14 @@ sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 ### Commands
 *Synology-Docker* supports the following commands. 
 
-| Command             | Argument  | Description |
-|---------------------|-----------|-------------|
-| **`backup`**        |           | Create a backup of Docker binaries (including Docker Compose), `dockerd` configuration, and Synology's `start-stop-status` script |
-| **`download`**      | PATH      | Download Docker and Docker Compose binaries to *PATH* |
-| **`install`**       | PATH      | Update Docker and Docker Compose from files on *PATH* |
-| **`restore`**       |           | Restore Docker and Docker Compose from a backup |
-| **`update`**        |           | Update Docker and Docker Compose to a target version (creates a backup first) |
-| **`update-logger`** |           | Update ONLY the logging-driver. This is a good first step to remove the dependency on the synology logger |
+| Command               | Argument  | Description |
+|-----------------------|-----------|-------------|
+| **`backup`**          |           | Create a backup of Docker binaries (including Docker Compose), `dockerd` configuration, and Synology's `start-stop-status` script |
+| **`download`**        | PATH      | Download Docker and Docker Compose binaries to *PATH* |
+| **`install`**         | PATH      | Update Docker and Docker Compose from files on *PATH* |
+| **`restore`**         |           | Restore Docker and Docker Compose from a backup |
+| **`update`**          |           | Update Docker and Docker Compose to a target version (creates a backup first) |
+| **`update-logger`**   |           | Update ONLY the logging-driver. This is a good first step to remove the dependency on the synology logger |
 
 Under the hood, the five different commands invoke a specific workflow or sequence of steps. The below table shows the workflows and the order of steps for each of the commands.
 | #  | Workflow step               | backup | download | install | restore | update  | update-logger |
