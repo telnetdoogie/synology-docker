@@ -117,7 +117,7 @@ usage() {
     echo "  install [PATH]         Update Docker and Docker Compose from files on PATH"
     echo "  restore                Restore Docker and Docker Compose from backup"
     echo "  update                 Update Docker and Docker Compose to target version (creates backup first)"
-    echo "  update-logger          Update ONLY the logging driver to the local logger (a proactive preparation step)"
+    echo "  logger          Update ONLY the logging driver to the local logger (a proactive preparation step)"
     echo "  validate               Validates versions available for update"
     echo
 }
@@ -1042,7 +1042,7 @@ main() {
                 target="$1"
                 validate_target "Invalid target"
                 ;;
-            backup | restore | update | update-logger | validate )
+            backup | restore | update | logger | validate )
                 command="$1"
                 ;;
             download | install )
@@ -1103,7 +1103,7 @@ main() {
             execute_restore_script
             execute_start_syno
             ;;
-        update-logger )
+        logger )
             total_steps=4
             detect_current_versions
             execute_prepare
