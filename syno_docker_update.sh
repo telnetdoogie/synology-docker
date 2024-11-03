@@ -27,6 +27,12 @@ terminate() {
     exit 1
 }
 
+terminate_with_warning() {
+    printf "${RED}${BOLD}%s${NC}\n" "Exiting - $1"
+    exit 1
+}
+
+
 #======================================================================================================================
 # Constants
 #======================================================================================================================
@@ -493,7 +499,7 @@ define_update() {
     if [ "${force}" != 'true' ] ; then
         if [ "${docker_version}" = "${target_docker_version}" ] && \
             [ "${compose_version}" = "${target_compose_version}" ] ; then
-            terminate "Already on target version for Docker and Docker Compose"
+            terminate_with_warning "Already on target version for Docker and Docker Compose"
         fi
         if [ "${docker_version}" = "${target_docker_version}" ] && [ "${skip_docker_update}" = 'false' ] ; then
             skip_docker_update='true'
