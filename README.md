@@ -179,6 +179,8 @@ This [link][known_issues] contains an overview of known issues, including availa
 ## Credits
 *Synology-Docker* is inspired by this [gist][gist_mikado8231] from Mikado8231.
 
+Thanks to [@markdumay](http://github.com/markdumay) for his original work that this was forked from.
+
 Thanks to [@mrmuiz](https://github.com/mrmuiz) for lots of testing across different Synology versions and great feedback
 
 ## License
