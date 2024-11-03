@@ -6,7 +6,7 @@
 # Orig. Author  : Mark Dumay
 # Maintainer    : Jason Hobbs (telnetdoogie)
 # Date          : October 12th, 2024
-# Version       : 2.1.0
+# Version       : 2.1.1
 # Usage         : sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 # Repository    : https://github.com/telnetdoogie/synology-docker.git
 # License       : MIT - https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE
@@ -57,11 +57,10 @@ readonly SYNO_DOCKER_SCRIPT_FORWARDING='# ensure IP forwarding\n\t\tsudo iptable
 readonly SYNO_SERVICE_STOP_TIMEOUT='5m'
 RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | wc -l 2>/dev/null || echo 0)
 if [ "$RUNNING_CONTAINERS" -gt 5 ]; then
-    readonly SYNO_SERVICE_START_TIMEOUT=$(echo "$RUNNING_CONTAINERS * 1.5" | bc)m
+    readonly SYNO_SERVICE_START_TIMEOUT=$(( (RUNNING_CONTAINERS * 3) / 2 ))m
 else
 	readonly SYNO_SERVICE_START_TIMEOUT='5m'
 fi
-
 
 #======================================================================================================================
 # Variables
