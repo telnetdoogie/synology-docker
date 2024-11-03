@@ -55,10 +55,11 @@ if [ ${#docker_managed[@]} -gt 0 ]; then
 	# There are containers not managed by compose nor portainer.
 	# Provide some clues on how to restart those containers.
 	echo
-	echo "The following containers appear to have been started with docker commands."
-	echo "Below are some clues on the command needed to to recreate them"
-	echo "...this is a best guess and may not be 100% accurate."
-	echo
+	echo "The following containers may have been created with docker commands."
+	echo "Below are some clues on the command needed to to recreate them ONLY IF YOU HAVE NO OTHER WAY TO DO SO."
+	echo "...this is a best guess and may not be 100% accurate. If all containers already show as 'local' logger,"
+ 	echo "there is no need to recreate."
+ 	echo
 	for container in "${docker_managed[@]}"; do
 		docker_command=$(./container_recreate.sh $container)
 		echo "----------------------------------------------------"
