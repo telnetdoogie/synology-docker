@@ -32,11 +32,26 @@ terminate_with_warning() {
     exit 1
 }
 
+validate_dependencies(){
+	# Define the presence of dependent files
+	DEPENDENT_FILES=(
+		"container_recreate.sh"
+		"syno_docker_list_containers.sh"
+		"syno_docker_switch_logger.sh")
+	# Loop through each file in the array and check if it exists
+	for file in "${DEPENDENT_FILES[@]}"; do
+		if [[ ! -f "$SCRIPT_DIR/$file" ]]; then
+			terminate "Error: Required file '$file' is missing in the script directory ($SCRIPT_DIR). You may need to do a git pull."
+			exit 1
+		fi
+	done
+}
 
 #======================================================================================================================
 # Constants
 #======================================================================================================================
-readonly RED='\e[31m' # Red color
+readonly RED='\e[31m' # Red colori
+readonly SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 readonly NC='\e[m' # No color / reset
 readonly BOLD='\e[1m' # Bold font
 readonly DSM_SUPPORTED_VERSION=6
@@ -860,7 +875,7 @@ execute_restore_bin() {
 execute_update_log() {
     print_status "Configuring log driver"
     if [ "${stage}" = 'false' ] && [ "${skip_driver_update}" = 'false' ] ; then
-		./syno_docker_switch_logger.sh "${SYNO_DOCKER_JSON}"
+		"${SCRIPT_DIR}/syno_docker_switch_logger.sh" "${SYNO_DOCKER_JSON}"
     else
         echo "Skipping configuration in STAGE mode or TARGET mode"
     fi
@@ -1006,6 +1021,9 @@ main() {
         usage
         terminate "You need to be root to run this script"
     fi
+
+	# Validate dependencies
+	validate_dependencies
 
     # Process and validate command-line arguments
     while [ "$1" != "" ]; do
