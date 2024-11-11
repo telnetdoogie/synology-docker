@@ -122,7 +122,7 @@ usage() {
     echo "  install [PATH]         Update Docker and Docker Compose from files on PATH"
     echo "  restore                Restore Docker and Docker Compose from backup"
     echo "  update                 Update Docker and Docker Compose to target version (creates backup first)"
-    echo "  logger          Update ONLY the logging driver to the local logger (a proactive preparation step)"
+    echo "  logger                 Update ONLY the logging driver to the local logger (a proactive preparation step)"
     echo "  validate               Validates versions available for update"
     echo
 }
