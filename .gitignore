@@ -6,3 +6,4 @@ docker_backup*.tgz
 
 # Local filesystem files
 .DS_Store
+/.idea/*
