@@ -42,7 +42,6 @@ validate_dependencies(){
 	for file in "${DEPENDENT_FILES[@]}"; do
 		if [[ ! -f "$SCRIPT_DIR/$file" ]]; then
 			terminate "Error: Required file '$file' is missing in the script directory ($SCRIPT_DIR). You may need to do a git pull."
-			exit 1
 		fi
 	done
 }
@@ -50,10 +49,10 @@ validate_dependencies(){
 #======================================================================================================================
 # Constants
 #======================================================================================================================
-readonly RED='\e[31m' # Red colori
-readonly SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+readonly RED='\e[31m' # Red color
 readonly NC='\e[m' # No color / reset
 readonly BOLD='\e[1m' # Bold font
+readonly SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 readonly DSM_SUPPORTED_VERSION=6
 readonly DEFAULT_DOCKER_VERSION='20.10.11'
 readonly DEFAULT_COMPOSE_VERSION='2.1.1'
@@ -246,7 +245,7 @@ detect_available_downloads() {
 }
 
 #======================================================================================================================
-# Detects latest stable versions of Docker and Docker Compose available for download. The detection is skipped if a 
+# Detects latest stable versions of Docker and Docker Compose available for download. The detection is skipped if a
 # specific target Docker and/or Compose version is already specified. Default versions are assigned if the detection
 # fails for some reason.
 #======================================================================================================================
@@ -261,9 +260,8 @@ detect_available_downloads() {
 detect_available_versions() {
     # Detect latest available Docker version
     if [ -z "${target_docker_version}" ] && [ "${skip_docker_update}" = 'false' ] ; then
-        docker_bin_files=$(curl -s "${DOWNLOAD_DOCKER}/" | grep -Eo '>docker-[0-9]*.[0-9]*.[0-9]*(-ce)?.tgz' | \
-            cut -c 2-)
-        latest_docker_bin=$(echo "${docker_bin_files}" | sort -bt. -k1,1 -k2,2n -k3,3n -k4,4n -k5,5n | tail -1)
+        docker_bin_files=$(curl -s "${DOWNLOAD_DOCKER}/" | grep -Eo '>docker-[0-9]*.[0-9]*.[0-9]*(-ce)?.tgz' | cut -c 2-)
+        latest_docker_bin="$(echo "${docker_bin_files}" | sort -bt. -k1,1 -k2,2n -k3,3n -k4,4n -k5,5n | tail -1)"
         target_docker_version=$(echo "${latest_docker_bin}" | sed "s/docker-//g" | sed "s/.tgz//g" )
 
         if [ -z "${target_docker_version}" ] ; then
