@@ -26,78 +26,81 @@
     </a>
 </p>
 
-<!-- Table of Contents -->
-<p align="center">
-  <a href="#about">About</a> •
-  <a href="#built-with">Built With</a> •
-  <a href="#prerequisites">Prerequisites</a> •
-  <a href="#deployment">Deployment</a> •
-  <a href="#usage">Usage</a> •
-  <a href="#contributing">Contributing</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#donate">Donate</a> •
-  <a href="#license">License</a>
-</p>
-
 
 ## About
 | :warning: The repository 'Synology-Docker' is not supported by Synology and can potentially lead to malfunctioning of your NAS. Use this script at your own risk. Please keep a backup of your files. |
 | --- |
 
-| :warning: If you're using the Nvidia driver on your synology, you will need to re-start the Nvidia driver, or re-run `nvidia-ctk runtime configure` to re-add the nvidia runtime after each run of this script in order for the driver to get re-added to docker. |
+| :warning: If you're using the Nvidia driver on your synology, you may need to re-start the Nvidia driver, or re-run `nvidia-ctk runtime configure` to re-add the nvidia runtime after each run of this script in order for the driver to get re-added to docker. |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+| :exclamation: Portainer Users - Portainer currently has an [issue](https://github.com/portainer/portainer/issues/10462) where it persists the first-used logging driver alongside container definitions. You will have to completely recreate (or duplicate and edit) containers created in portainer to use the `local` log driver. It would be best to do that with all of your containers BEFORE running this update. Portainer has created some challenges for users migrating from one log driver to another. It also has created problems with networks and port definitions not translating... You will have to spend way more time re-creating and troubleshooting containers after this update if you're trying to use portainer. So... if you're using portainer and you use this update... you have been warned... things will not be smooth. `docker-compose` is the way to go.
 | --- |
 
-| :exclamation: Portainer Users - Portainer currently has an [issue](https://github.com/portainer/portainer/issues/10462) where it persists the first-used logging driver alongside container definitions. You may have to completely recreate (or duplicate and edit) containers created in portainer to use the `local` log driver. It would be best to do that with all of your containers BEFORE running this update. Portainer has created some challenges for users migrating from one log driver to another. It also has created problems with networks and port definitions not translating... You will have to spend way more time re-creating and troubleshooting containers after this update if you're trying to use portainer. So... if you're using portainer and you use this update... you have been warned... things will not be smooth. `docker-compose` is the way to go.
-| --- |
+[Synology][synology_url] is a popular manufacturer of Network Attached Storage (NAS) devices that supports Docker on selected [models]
 
-[Synology][synology_url] is a popular manufacturer of Network Attached Storage (NAS) devices. It provides a web-based user interface called Disk Station Manager (DSM). Synology also supports Docker on selected [models][synology_docker]. Docker is a lightweight virtualization application that gives you the ability to run containers directly on your NAS. The add-on package provided by Synology to install Docker is typically a version behind on the latest available version from Docker. *Synology-Docker* is a POSIX-compliant shell script to update both the Docker Engine and Docker Compose on your NAS to the latest version or a specified version.
+[synology_docker](https://github.com/telnetdoogie/synology-docker/) is a POSIX-compliant shell script designed to update Docker Engine and Docker Compose on your NAS to the latest or a specified version.
 
-<!-- TODO: add tutorial deep-link 
-Detailed background information is available on the author's [personal blog][blog].
--->
-
-## Built With
-The project uses [Docker][docker_url], a lightweight virtualization application.
-
-## Prerequisites
-*Synology-Docker* runs on a Synology NAS with DSM 6 or DSM 7. The script has been tested with a DS918+ running DSM 6.2.4-25556, DSM 7.0.1-42218, and DSM 7.2.1-69057. Other prerequisites are:
-
-* **SSH admin access is required** - *Synology-Docker* runs as a shell script on the terminal. You can enable SSH access in DSM under `Control Panel ➡ Terminal & SNMP ➡ Terminal`.
-
-* **Docker is required** - *Synology-Docker* updates the binaries of an existing Docker installation only. Install Docker on your NAS in DSM via `Package Center ➡ All Packages ➡ ContainerManager` and ensure the status is `Running`.
-
-* **SynoCommunity/Git is required** - *Synology-Docker* needs the [Git package](https://synocommunity.com/package/git) from [SynoCommunity](https://synocommunity.com) installed on your NAS. Install Git on your NAS by adding the SynoCommunity package repository (described [here](https://synocommunity.com/#easy-install)) and installing the Git package in DSM via `Package Center ➡ Community ➡ Git`.
-
-## Deployment
-Deployment of *Synology-Docker* is a matter of cloning the GitHub repository. Login to your NAS terminal via SSH first. Assuming you are in the working folder of your choice, clone the repository files. Git automatically creates a new folder `synology-docker` and copies the files to this directory. Then change your current folder to simplify the execution of the shell script.
+## Getting this script on your NAS
+Deployment of *Synology-Docker* is a matter of cloning the GitHub repository. Login to your NAS terminal via SSH first.
+Assuming you are in the working folder of your choice (assume `/volume1/homes/admin`), clone the repository files.
+Git automatically creates a new folder `synology-docker` and copies the files to this directory. Once the repo has been cloned,
+change your current folder to the location of the script. (`cd synology-docker`) before running the script.
 
 ```console
 git clone https://github.com/telnetdoogie/synology-docker.git
 cd synology-docker
 ```
 
-<!-- TODO: TEST CHMOD -->
+## Recommended Update Steps 
 
-## Preparation before upgrade
-If you're using *compose* for your containers, I highly recommend that before you run the upgrade (or restore, if you're going back to the original version) you go through and stop each running container.
-```console
-cd /volume1/docker/{my_container}
-docker-compose down
-```
-Because this upgrade modifies the default logger for docker, stopping (removing) and re-starting each container is required, since the logging mechanism is persisted during a compose docker build / start. You don't HAVE to do this before the upgrade, however if you don't, you'll get errors related to the logger for your containers, and will have to stop and start each container / stack after the upgrade anyway.
+| :exclamation: Please Note: recommended update method has changed... I've attempted to lay out new instructions to make this smoother. Deal with loggers for containers FIRST and your life will be so much easier :)
+| --- |
 
-Stopping all the containers prior to the upgrade / restore will also make the upgrade a lot faster, since the service stop and restart normally has to do the work of stopping and starting all containers.
+To ensure a smooth update, it is highly recommended to follow these steps in order:
 
-For a convenient way of enumerating all of the running compose projects, run the script:
+1. **Update the logger** to replace Synology's default log driver (`db`) with the `local` log driver. Running this step before anything else will make for a much smoother transition.
+   ```console
+   sudo ./syno_docker_update.sh logger
+   ```
+   This script will update the `dockerd.json` file and will make the `local` logger default. It will then restart docker on your synology. 
+   After restarting (all containers should come back up) you can identify which containers are using the `db` log driver by running:
+   ```console
+   ./syno_docker_list_containers.sh
+   ```
+   This will give output similar to the following:
+   ```console
+   Container            Compose_Location                                       Logger
+   -------------------  ------------------------------------------------------ -------
+   /jetbrains_postgres  !---not_managed_by_compose---!                         local
+   /transmission        /volume1/docker/downloaderstack_vpn/docker-compose.yml db
+   /dozzle              /volume1/docker/dozzle/docker-compose.yml              db
+   /flaresolverr        /volume1/docker/flaresolverr/docker-compose.yml        db
+   /inadyn              /volume1/docker/inadyn/docker-compose.yml              db
+   /iPerf3              /volume1/docker/iPerf/docker-compose.yml               db
+   /jellyfin            /volume1/docker/jellyfin/docker-compose.yml            db
+   ```
+   
+2. **Recreate Containers with the `local` Logger**:
+    - For each `docker-compose` managed container using the `db` log driver, recreate it with:
+      ```console
+      docker-compose up -d --force-recreate
+      ```
+   Any portainer managed containers here or containers managed any other way, you will need to understand how to recreate those so that they use the `local` logger. 
+      Proceeding beyond this point with containers still showing as using the `db` logger will result in failures to start container after the update.
+   - You can run `./syno_docker_list_containers.sh` as many times as you need to, to see which containers still need to switch to the `local` logger.
+   - If the containers were created with a `docker run` command, this script will provide a suggestion about how to recreate that container after a `docker container rm` - 
+   however, this is a 'best guess' and may not be 100% accurate.
 
-```console
-./syno_docker_list_containers.sh
-```
 
-...if you see a container listed with **!---not_managed_by_compose---!** you'll need to make sure you know how to:
-1. Remove this container
-1. Recreate this container after the upgrade (which will default to the new logging driver)
-The `syno_docker_list_containers.sh` script will attempt to make a suggestion about how to re-create the container, however if you have the original script or command, you should use what you know. The script may not be 100% correct.
+3. Once all containers now use `local` logger, **run the `update` script** to update Docker and Docker Compose to the latest version.
+   ```console
+   sudo ./syno_docker_update.sh update
+   ```
+
+4. If all containers were switched to the `local` logger before the update is complete, all containers should spin up as part of the update script.
+
+---
 
 ## Usage
 *Synology-Docker* requires `sudo` rights. Use the following command to invoke *Synology-Docker* from the command line.
