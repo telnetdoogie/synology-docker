@@ -81,7 +81,7 @@ To ensure a smooth update, it is highly recommended to follow these steps in ord
    /jellyfin            /volume1/docker/jellyfin/docker-compose.yml            db
    ```
    
-2. **Recreate Containers with the `local` Logger**:
+2. **Recreate Containers one by one until they all show that they're using the `local` Logger**:
     - For each `docker-compose` managed container using the `db` log driver, recreate it with:
       ```console
       docker-compose up -d --force-recreate
