@@ -100,7 +100,6 @@ To ensure a smooth update, it is highly recommended to follow these steps in ord
 
 4. If all containers were switched to the `local` logger before the update is complete, all containers should spin up as part of the update script.
 
----
 ## Updating AFTER the first time
 
 Once you've successfully updated your docker version with this script, subsequent updates are very simple.
