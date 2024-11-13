@@ -19,12 +19,12 @@ A clear and concise description of what you expected to happen.
 
 **Log file**
 ```
-Capture the exact output of the 'syno_docker_update.sh' script.
+Capture the entire output of the 'syno_docker_update.sh' script. here
 ```
 
 **Docker daemon configuration**
 ```
-Capture the content of the file `/var/packages/Docker/etc/dockerd.json`.
+Capture the content of `sudo cat /var/packages/ContainerManager/etc/dockerd.json` here
 ```
 
 **Additional context**
