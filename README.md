@@ -52,7 +52,7 @@ git clone https://github.com/telnetdoogie/synology-docker.git
 cd synology-docker
 ```
 
-## Recommended Update Steps 
+## Recommended Update Steps for "First Time" upgrade
 
 | :exclamation: Please Note: recommended update method has changed... I've attempted to lay out new instructions to make this smoother. Deal with loggers for containers FIRST and your life will be so much easier :)
 | --- |
@@ -99,6 +99,20 @@ To ensure a smooth update, it is highly recommended to follow these steps in ord
    ```
 
 4. If all containers were switched to the `local` logger before the update is complete, all containers should spin up as part of the update script.
+
+---
+## Updating AFTER the first time
+
+Once you've successfully updated your docker version with this script, subsequent updates are very simple.
+
+```console
+cd synology-docker
+git pull
+./syno_docker_update.sh update
+```
+
+The biggest 'hump' is the initial shift to the `local` loggers. After the first successful update, each update beyond that is very simple.
+The above commands will update to the latest version of docker if one is available, and will restart docker once the update is complete.
 
 ---
 
