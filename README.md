@@ -82,8 +82,9 @@ To ensure a smooth update, it is highly recommended to follow these steps in ord
    ```
    
 2. **Recreate Containers one by one until they all show that they're using the `local` Logger**:
-    - For each `docker-compose` managed container using the `db` log driver, recreate it with:
+    - For **each** `docker-compose` managed container using the `db` log driver, recreate it with:
       ```console
+      cd /volume1/docker/dozzle/  # change to the location of the compose project shown
       docker-compose up -d --force-recreate
       ```
    Any portainer managed containers here or containers managed any other way, you will need to understand how to recreate those so that they use the `local` logger. 
