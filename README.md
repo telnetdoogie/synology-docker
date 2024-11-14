@@ -103,7 +103,7 @@ To ensure a smooth update, it is highly recommended to follow these steps in ord
 
 ## Updating AFTER the first time
 
-Once you've successfully updated your docker version with this script, subsequent updates are very simple.
+Once you've successfully updated your docker version with this script, subsequent updates - to continue updating to newer `docker` versions - are very simple.
 
 ```console
 cd synology-docker
