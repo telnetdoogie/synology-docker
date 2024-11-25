@@ -73,7 +73,7 @@ readonly SYNO_DOCKER_SCRIPT_PATH="${SYNO_DOCKER_DIR}/scripts"
 readonly SYNO_DOCKER_SCRIPT="${SYNO_DOCKER_SCRIPT_PATH}/start-stop-status"
 readonly SYNO_DOCKER_JSON_PATH="${SYNO_DOCKER_DIR}/etc"
 readonly SYNO_DOCKER_JSON="${SYNO_DOCKER_JSON_PATH}/dockerd.json"
-readonly SYNO_DOCKER_SCRIPT_FORWARDING='# ensure IP forwarding\n\t\tsudo iptables -P FORWARD ACCEPT\n'
+readonly SYNO_DOCKER_SCRIPT_FORWARDING="		# Added by docker update\n		iptables -P FORWARD ACCEPT"
 readonly SYNO_SERVICE_STOP_TIMEOUT='5m'
 RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | wc -l 2>/dev/null || echo 0)
 if [ "$RUNNING_CONTAINERS" -gt 5 ]; then
@@ -890,10 +890,18 @@ execute_update_log() {
 #======================================================================================================================
 execute_update_script() {
     print_status "Enabling IP forwarding"
-    if [ "${stage}" = 'false' ] ; then
-        if ! grep -q 'iptables -P FORWARD ACCEPT' "${SYNO_DOCKER_SCRIPT}"; then
-            match='# start docker'
-            sed -i "s/${match}/${SYNO_DOCKER_SCRIPT_FORWARDING}\n\t\t${match}/" "${SYNO_DOCKER_SCRIPT}"
+    if [ "${stage}" = 'false' ]; then
+        # File to edit
+        file="${SYNO_DOCKER_SCRIPT}"
+        
+        # Search and check conditions
+        if ! grep -q 'iptables -P FORWARD ACCEPT' "${file}"; then
+            match="^[[:space:]]*iptablestool --insmod"
+            # Use sed to append the lines after the match
+            sed -i "/${match}/a\\${SYNO_DOCKER_SCRIPT_FORWARDING}" "${file}"
+            echo "Added missing IP forwarding configuration to ${file}."
+        else
+            echo "IP forwarding is already enabled in ${file}."
         fi
     else
         echo "Skipping configuration in STAGE mode"
