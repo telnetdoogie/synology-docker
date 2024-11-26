@@ -6,7 +6,7 @@
 # Orig. Author  : Mark Dumay
 # Maintainer    : Jason Hobbs (telnetdoogie)
 # Date          : October 12th, 2024
-# Version       : 2.1.1
+# Version       : 2.3.0
 # Usage         : sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 # Repository    : https://github.com/telnetdoogie/synology-docker.git
 # License       : MIT - https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE
