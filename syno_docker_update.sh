@@ -6,7 +6,7 @@
 # Orig. Author  : Mark Dumay
 # Maintainer    : Jason Hobbs (telnetdoogie)
 # Date          : October 12th, 2024
-# Version       : 2.3.0
+# Version       : 2.3.1
 # Usage         : sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 # Repository    : https://github.com/telnetdoogie/synology-docker.git
 # License       : MIT - https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE
@@ -79,7 +79,7 @@ RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | wc -l 2>/dev/null || echo 0)
 if [ "$RUNNING_CONTAINERS" -gt 5 ]; then
     readonly SYNO_SERVICE_START_TIMEOUT=$(( (RUNNING_CONTAINERS * 3) / 2 ))m
 else
-	readonly SYNO_SERVICE_START_TIMEOUT='5m'
+    readonly SYNO_SERVICE_START_TIMEOUT=10m
 fi
 
 #======================================================================================================================
