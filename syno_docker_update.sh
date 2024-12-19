@@ -2,16 +2,9 @@
 
 #======================================================================================================================
 # Title         : syno_docker_update.sh
-# Description   : An Unofficial Script to Update or Restore Docker Engine and Docker Compose on Synology
-# Orig. Author  : Mark Dumay
-# Maintainer    : Jason Hobbs (telnetdoogie)
 # Date          : October 12th, 2024
-# Version       : 2.3.0
 # Usage         : sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 # Repository    : https://github.com/telnetdoogie/synology-docker.git
-# License       : MIT - https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE
-# Credits       : Inspired by https://gist.github.com/Mikado8231/bf207a019373f9e539af4d511ae15e0d
-# Comments      : Use this script at your own risk. Refer to the license for the warranty disclaimer.
 #======================================================================================================================
 
 #======================================================================================================================
@@ -79,7 +72,7 @@ RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | wc -l 2>/dev/null || echo 0)
 if [ "$RUNNING_CONTAINERS" -gt 5 ]; then
     readonly SYNO_SERVICE_START_TIMEOUT=$(( (RUNNING_CONTAINERS * 3) / 2 ))m
 else
-	readonly SYNO_SERVICE_START_TIMEOUT='5m'
+    readonly SYNO_SERVICE_START_TIMEOUT=10m
 fi
 
 #======================================================================================================================
