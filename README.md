@@ -108,7 +108,7 @@ Once you've successfully updated your docker version with this script, subsequen
 ```console
 cd synology-docker
 git pull
-./syno_docker_update.sh update
+sudo ./syno_docker_update.sh update
 ```
 
 The biggest 'hump' is the initial shift to the `local` loggers. After the first successful update, each update beyond that is very simple.
