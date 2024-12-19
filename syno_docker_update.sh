@@ -66,11 +66,16 @@ readonly SYNO_DOCKER_SCRIPT_PATH="${SYNO_DOCKER_DIR}/scripts"
 readonly SYNO_DOCKER_SCRIPT="${SYNO_DOCKER_SCRIPT_PATH}/start-stop-status"
 readonly SYNO_DOCKER_JSON_PATH="${SYNO_DOCKER_DIR}/etc"
 readonly SYNO_DOCKER_JSON="${SYNO_DOCKER_JSON_PATH}/dockerd.json"
-readonly SYNO_DOCKER_SCRIPT_FORWARDING="		# Added by docker update\n		iptables -P FORWARD ACCEPT"
-readonly SYNO_SERVICE_STOP_TIMEOUT='5m'
+readonly SYNO_DOCKER_SCRIPT_FORWARDING="    		# Added by docker update\n	    	iptables -P FORWARD ACCEPT"
+readonly SYNO_SERVICE_STOP_TIMEOUT='10m'
 RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | wc -l 2>/dev/null || echo 0)
 if [ "$RUNNING_CONTAINERS" -gt 5 ]; then
-    readonly SYNO_SERVICE_START_TIMEOUT=$(( (RUNNING_CONTAINERS * 3) / 2 ))m
+    computed_timeout=$(( (RUNNING_CONTAINERS * 3) / 2 ))
+    if [ "$computed_timeout" -lt 10 ]; then
+        readonly SYNO_SERVICE_START_TIMEOUT=10m
+    else
+        readonly SYNO_SERVICE_START_TIMEOUT=$(( (RUNNING_CONTAINERS * 3) / 2 ))m
+    fi
 else
     readonly SYNO_SERVICE_START_TIMEOUT=10m
 fi
