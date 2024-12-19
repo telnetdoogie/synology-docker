@@ -515,6 +515,12 @@ define_update() {
             skip_compose_update='true'
             total_steps=$((total_steps-1))
         fi
+        
+        log_driver=$(jq -r '.["log-driver"] // empty' "${SYNO_DOCKER_JSON}")
+        if [ "$log_driver" = "local" ]; then
+          skip_driver_update='true'
+          total_steps=$((total_steps-1))
+        fi
     fi
 }
 
