@@ -471,7 +471,7 @@ validate_target() {
         engine )
             skip_docker_update='false'
             skip_compose_update='true'
-            skip_driver_update='true'
+            skip_driver_update='false'
             ;;
         compose )
             skip_docker_update='true'
