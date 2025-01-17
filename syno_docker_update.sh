@@ -68,7 +68,7 @@ readonly SYNO_DOCKER_JSON_PATH="${SYNO_DOCKER_DIR}/etc"
 readonly SYNO_DOCKER_JSON="${SYNO_DOCKER_JSON_PATH}/dockerd.json"
 readonly SYNO_DOCKER_SCRIPT_FORWARDING="    		# Added by docker update\n	    	iptables -P FORWARD ACCEPT"
 readonly SYNO_SERVICE_STOP_TIMEOUT='10m'
-RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | wc -l 2>/dev/null || echo 0)
+RUNNING_CONTAINERS=$(docker ps -q | awk 'NF' | wc -l)
 if [ "$RUNNING_CONTAINERS" -gt 5 ]; then
     computed_timeout=$(( (RUNNING_CONTAINERS * 3) / 2 ))
     if [ "$computed_timeout" -lt 10 ]; then
@@ -959,7 +959,8 @@ execute_restore_script() {
 #   Started Docker daemon, or a non-zero exit code if the start failed or timed out.
 #======================================================================================================================
 execute_start_syno() {
-    print_status "Starting Docker service - May take a while to restart ${RUNNING_CONTAINERS} containers... (up to ${SYNO_SERVICE_START_TIMEOUT})"
+    print_status "Starting Docker service - May take a while. "
+    print_status "   - timeout set to ${SYNO_SERVICE_START_TIMEOUT} based on ${RUNNING_CONTAINERS} active containers"
 
     if [ "${stage}" = 'false' ] ; then
         case "${dsm_major_version}" in
