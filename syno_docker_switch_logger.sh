@@ -52,7 +52,8 @@ jq '
   .["log-opts"] = {
     "max-file": "5",
     "max-size": "20m"
-  }
+  } |
+  .["iptables"] = true
 ' "$DOCKERD_FILE" > "$DOCKERD_FILE.tmp" && mv "$DOCKERD_FILE.tmp" "$DOCKERD_FILE"
 
 # Output the new JSON file
