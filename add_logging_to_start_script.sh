@@ -35,13 +35,10 @@ if [ -f "./start-stop-status.bkup" ]; then
   echo "...skipping backup"
 else
   cp /var/packages/ContainerManager/scripts/start-stop-status ./start-stop-status.bkup
-  echo "...backed up to ./start-stop-status.bkup"
 fi
 echo
 
-if [ -f "./start-stop-status.bkup" ]; then
-  break
-else
+if [ ! -f "./start-stop-status.bkup" ]; then
   echo
   echo "Problem backing up script. Stopping."
   exit
@@ -51,7 +48,7 @@ fi
 echo "Replacing start-stop-status with logging-added version..."
 cp -f ./test_file/start-stop-status.withlogging /var/packages/ContainerManager/scripts/start-stop-status
 echo "Fix permissions on start-stop-status script..."
-chmod 766 /var/packages/ContainerManager/scripts/start-stop-status
+chmod 744 /var/packages/ContainerManager/scripts/start-stop-status
 echo
 echo "start-stop-status script replaced, logging added."
 echo
