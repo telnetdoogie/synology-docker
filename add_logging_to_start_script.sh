@@ -55,5 +55,5 @@ chmod 766 /var/packages/ContainerManager/scripts/start-stop-status
 echo
 echo "start-stop-status script replaced, logging added."
 echo
-echo "To observe logging during startup, run ` sudo cat /var/log/messages | grep Synology-Docker ` "
+echo "To observe logging during startup, run 'sudo cat /var/log/messages | grep Synology-Docker'"
 echo
