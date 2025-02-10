@@ -1,0 +1,298 @@
+#!/bin/sh
+# Copyright (c) 2000-2015 Synology Inc. All rights reserved.
+. /var/packages/ContainerManager/scripts/pkg_utils
+## Get modules list
+source /usr/syno/etc.defaults/iptables_modules_list
+DockerModules="xt_addrtype.ko xt_conntrack.ko veth.ko macvlan.ko aufs.ko"
+DockerBridgeModules="llc.ko stp.ko bridge.ko macvlan.ko"
+if [ -f /lib/modules/br_netfilter.ko ]; then
+    DockerBridgeModules="${DockerBridgeModules} br_netfilter.ko"
+fi
+DockerIngressModules="iptable_mangle.ko xt_mark.ko ip_vs.ko ip_vs_rr.ko xt_ipvs.ko"
+DockerBinLink="/usr/local/bin/docker"
+DockerdBinLink="/usr/local/bin/dockerd"
+DockerComposeBinLink="/usr/local/bin/docker-compose"
+ContainerdBinLink="/usr/local/bin/containerd"
+ContainerdCtrBinLink="/usr/local/bin/ctr"
+ContainerdShimBinLink="/usr/local/bin/containerd-shim"
+ContainerdShimRuncV1BinLink="/usr/local/bin/containerd-shim-runc-v1"
+ContainerdShimRuncV2BinLink="/usr/local/bin/containerd-shim-runc-v2"
+ContainerdStressBinLink="/usr/local/bin/containerd-stress"
+RuncBinLink="/usr/local/bin/runc"
+DockerInitBinLink="/usr/local/bin/docker-init"
+DockerProxyBinLink="/usr/local/bin/docker-proxy"
+AuplinkBinLink="/usr/local/bin/auplink"
+InsertModules="${KERNEL_MODULES_CORE} ${KERNEL_MODULES_COMMON} ${KERNEL_MODULES_NAT} ${IPV6_MODULES} ${DockerModules} ${DockerBridgeModules}"
+if [ -f /lib/modules/ip_vs.ko -a -f /lib/modules/ip_vs_rr.ko -a -f /lib/modules/xt_ipvs.ko ]; then
+    InsertModules="${InsertModules} ${DockerIngressModules}"
+fi
+DockerServName="docker"
+RunningContainerList="/var/packages/ContainerManager/etc/LastRunningContainer"
+Dockerd="pkg-ContainerManager-dockerd"
+Termd="pkg-ContainerManager-termd"
+DockerEventWatcherd="pkg-ContainerManager-event-watcherd"
+TargetPath="/var/packages/ContainerManager/target"
+DockerBin="$TargetPath/usr/bin/docker"
+DockerdBin="$TargetPath/usr/bin/dockerd"
+DockerComposeBin="$TargetPath/usr/bin/docker-compose"
+ContainerdBin="$TargetPath/usr/bin/containerd"
+ContainerdCtrBin="$TargetPath/usr/bin/ctr"
+ContainerdShimBin="$TargetPath/usr/bin/containerd-shim"
+ContainerdShimRuncV1Bin="$TargetPath/usr/bin/containerd-shim-runc-v1"
+ContainerdShimRuncV2Bin="$TargetPath/usr/bin/containerd-shim-runc-v2"
+ContainerdStressBin="$TargetPath/usr/bin/containerd-stress"
+RuncBin="$TargetPath/usr/bin/runc"
+DockerInitBin="$TargetPath/usr/bin/docker-init"
+DockerProxyBin="$TargetPath/usr/bin/docker-proxy"
+AuplinkBin="$TargetPath/usr/bin/auplink"
+DockerUpdaterBin="$TargetPath/tool/updater"
+ContainerDepBin="$TargetPath/tool/container_sort"
+ShutdownDockerDaemonFlag="/tmp/shutdown_docker_daemon"
+ContainerRunShareDir="/run/docker-share"
+HookDir="/var/packages/ContainerManager/var/hook"
+EventHookDir="$HookDir/event"
+MountShareHelper="$TargetPath/tool/mount_share_helper"
+DockerServicePortalBin="$TargetPath/tool/docker_service_portals"
+
+get_install_volume_type() {
+     local installed_volume="${SYNOPKG_PKGDEST_VOL}"
+     local volume_type="$(synofstool --get-fs-type "${installed_volume}")"
+     echo "${volume_type}"
+}
+
+wait_for_condition()
+{
+	local retryTimes=3
+	local timeGap=1
+	local i=0
+
+	for ((i;i<retryTimes;i=i+1)); do
+		if eval "$@" >&/dev/null; then
+			return 0 # condition succeeds
+		fi
+
+		sleep "${timeGap}"
+	done
+
+	return 1 # error
+}
+
+argument_reverse() {
+	local args="$1"
+	local arg
+	local ret=""
+
+	for arg in ${args}; do
+		ret="${arg} ${ret}"
+	done
+
+	echo "${ret}"
+}
+
+running_container_record() {
+	autostart_containers=()
+	for container_id in $($DockerBin ps -a --format '{{ .Names }}'); do
+		result="$(timeout 10 $DockerBin inspect --format '{{ .State.Running }} {{ .HostConfig.RestartPolicy.Name }}' $container_id 2>/dev/null)"
+		if [ $? -ne 0 ]; then
+			continue
+		fi
+		state=($result)
+		if [ "xtrue" = "x${state[0]}" ] || [ "xalways" = "x${state[1]}" ]; then
+			autostart_containers+=("$container_id")
+		fi
+	done
+	echo "${autostart_containers[@]}" > ${RunningContainerList}
+}
+
+running_container_oper() {
+	local action=$1
+	if [ "xstop" = "x${action}" ]; then
+		running_container_record
+	fi
+	if [ -f ${RunningContainerList} ]; then
+		list="$(cat "${RunningContainerList}")"
+		if [ "x" != "x${list}" ]; then
+			sort_list="$(${ContainerDepBin} ${list})"
+			for container in $sort_list
+			do
+				/usr/syno/bin/synowebapi --exec api=SYNO.Docker.Container method="$action" version=1 'name="'${container}'"'
+			done
+		fi
+		if [ "xstart" = "x${action}" ]; then
+			/bin/rm -f "${RunningContainerList}"
+		fi
+	fi
+}
+
+iptables_clear()
+{
+	eval $(iptables-save -t nat | grep DOCKER | grep -v "^:"| sed -e 1d -e  's/^-A/iptables -t filter -D/' -e 's/DEFAULT_//' -e 's/$/;/')
+	eval $(iptables-save -t filter | grep DOCKER | grep -v "^:"| sed -e 1d -e  's/^-A/iptables -t filter -D/' -e 's/DEFAULT_//' -e 's/$/;/')
+
+	iptables -t nat -X DOCKER
+	iptables -t filter -X DOCKER
+}
+
+clean_lock_files() {
+	rm /var/lock/dockerImage.lock /var/lock/dockerMapping.lock /var/lock/dockerRemoteAPI.lock*
+}
+
+umount_aufs() {
+	for i in $(grep aufs/mnt /proc/mounts | sed 's@.*aufs/mnt/\(\w*\)@\1@'); do
+		umount "${TargetPath}"/docker/aufs/mnt/$i
+	done
+
+	if grep -q @docker/aufs /proc/mounts; then
+		umount "${TargetPath}"/docker/aufs
+	fi
+}
+
+start_docker_daemon() {
+	local retryTimes=3
+	local i=0
+
+	echo "$(date): start_docker_daemon: try start docker daemon"
+
+	for ((i;i<retryTimes;i=i+1)); do
+		echo "$(date): start_docker_daemon: start daemon.."
+		/usr/syno/bin/synosystemctl start "${Dockerd}"
+
+		echo "$(date): start_docker_daemon: daemon started. start to wait for daemon ready"
+		if wait_for_condition timeout 10m "${DockerBin}" version; then
+			echo "$(date): start_docker_daemon: daemon is ready"
+			return 0
+		fi
+
+		echo "$(date): start_docker_daemon: daemon didn't get ready till timeout. Stop daemon.."
+		/usr/syno/bin/synosystemctl stop "${Dockerd}"
+		echo "$(date): start_docker_daemon: daemon stopped."
+	done
+
+	echo "$(date): start_docker_daemon: failed to start docker daemon"
+	return 1
+}
+
+clear_building_project_state() {
+	find /var/packages/ContainerManager/etc/projects -name '*.config.json' -exec sed -i 's/BUILDING//g' {} \;
+}
+sync_service_portal() {
+	if [ ! -f "/var/packages/WebStation/enabled" ]; then
+		return
+	fi
+	$DockerServicePortalBin sync
+}
+
+case "$1" in
+	start)
+		[ -d /usr/local/bin ] || mkdir -p /usr/local/bin
+		ln -sf "${DockerBin}" "${DockerBinLink}"
+		ln -sf "${DockerdBin}" "${DockerdBinLink}"
+		ln -sf "${DockerComposeBin}" "${DockerComposeBinLink}"
+		ln -sf "${ContainerdBin}" "${ContainerdBinLink}"
+		ln -sf "${ContainerdCtrBin}" "${ContainerdCtrBinLink}"
+		ln -sf "${ContainerdShimBin}" "${ContainerdShimBinLink}"
+		ln -sf "${ContainerdShimRuncV1Bin}" "${ContainerdShimRuncV1BinLink}"
+		ln -sf "${ContainerdShimRuncV2Bin}" "${ContainerdShimRuncV2BinLink}"
+		ln -sf "${ContainerdStressBin}" "${ContainerdStressBinLink}"
+		ln -sf "${RuncBin}" "${RuncBinLink}"
+		ln -sf "${DockerInitBin}" "${DockerInitBinLink}"
+		ln -sf "${DockerProxyBin}" "${DockerProxyBinLink}"
+		ln -sf "${AuplinkBin}" "${AuplinkBinLink}"
+
+		[ -d "${ContainerRunShareDir}" ] || mkdir -p "${ContainerRunShareDir}"
+		[ -d "${HookDir}" ] || mkdir -p "${HookDir}" && chmod 700 ${HookDir}
+		[ -d "${EventHookDir}" ] || mkdir -p "${EventHookDir}" && chmod 700 ${EventHookDir}
+
+		# install modules
+		iptablestool --insmod "${DockerServName}" ${InsertModules}
+		
+		$DockerUpdaterBin postinst updatedockerdconf "$(get_install_volume_type)"
+
+		$DockerUpdaterBin predaemonup
+		# start docker event watcherd
+		/usr/syno/bin/synosystemctl start "${DockerEventWatcherd}"
+		
+		# start docker
+		if ! start_docker_daemon; then
+			exit 1
+		fi
+
+		$DockerUpdaterBin postdaemonup
+		clear_building_project_state
+		sync_service_portal
+
+		## Start running container
+		running_container_oper start
+
+		#start termd
+		/usr/syno/bin/synosystemctl start ${Termd}
+
+		CreateHelpAndString
+
+		if [[ -f "/var/packages/Docker/INFO" ]]; then
+			synonotify cm_remove_legacy_docker
+		fi
+
+		$MountShareHelper --mount-all
+
+		exit 0
+		;;
+
+	stop)
+		modules="$(argument_reverse "${InsertModules}")"
+
+		rm "${DockerBinLink}"
+		rm "${DockerComposeBinLink}"
+
+		## Kill termd
+		/usr/syno/bin/synosystemctl stop ${Termd}
+
+		## Stop running container
+		running_container_oper stop
+
+		## touch flag to avoid container unexpected stopped false alarm
+		touch $ShutdownDockerDaemonFlag
+		/usr/syno/bin/synosystemctl stop ${Dockerd}
+		## remove flag
+		rm -f $ShutdownDockerDaemonFlag
+
+		## stop docker event watcherd
+		/usr/syno/bin/synosystemctl stop "${DockerEventWatcherd}"
+
+		rm "${DockerdBinLink}"
+		rm "${DockerContainerdBinLink}"
+		rm "${DockerContainerdCtrBinLink}"
+		rm "${DockerContainerdShimBinLink}"
+		rm "${DockerContainerdShimRuncV1BinLink}"
+		rm "${DockerContainerdShimRuncV2BinLink}"
+		rm "${DockerContainerdStressBinLink}"
+		rm "${DockerRuncBinLink}"
+		rm "${DockerInitBinLink}"
+		rm "${DockerProxyBinLink}"
+		rm "${AuplinkBinLink}"
+
+		umount_aufs
+		clean_lock_files
+		iptables_clear
+
+		iptablestool --rmmod "${DockerServName}" ${modules}
+
+		RemoveHelpAndString
+
+		$MountShareHelper --umount-all
+
+		exit 0
+		;;
+
+	status)
+		if  [ "active" = "$(synosystemctl get-active-status ${Dockerd})" ]; then
+			exit 0
+		else
+			exit 1
+		fi
+		;;
+
+	*)
+		exit 1
+		;;
+esac
