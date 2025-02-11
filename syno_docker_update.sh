@@ -960,7 +960,7 @@ execute_restore_script() {
 #======================================================================================================================
 execute_start_syno() {
     print_status "Starting Docker service - May take a while. "
-    print_status "   - timeout set to ${SYNO_SERVICE_START_TIMEOUT} based on ${RUNNING_CONTAINERS} active containers"
+    echo "   - timeout set to ${SYNO_SERVICE_START_TIMEOUT} based on ${RUNNING_CONTAINERS} active containers"
 
     if [ "${stage}" = 'false' ] ; then
         case "${dsm_major_version}" in
@@ -1147,7 +1147,7 @@ main() {
             execute_start_syno
             ;;
         update )
-            total_steps=10
+            total_steps=11
             detect_current_versions
             execute_prepare
             define_target_version
