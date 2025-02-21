@@ -3,7 +3,7 @@
 
 
 # synology-docker
-| :page_facing_up: Originally forked from [markdumay/synology-docker](http://github.com/markdumay/synology-docker) |
+| :page_facing_up: Originally forked from [telnetdoogie/synology-docker](https://github.com/telnetdoogie/synology-docker) |
 | --- |
 
 
@@ -52,7 +52,7 @@ Git automatically creates a new folder `synology-docker` and copies the files to
 change your current folder to the location of the script. (`cd synology-docker`) before running the script.
 
 ```console
-git clone https://github.com/telnetdoogie/synology-docker.git
+git clone https://github.com/mrkhachaturov/synology-docker.git
 cd synology-docker
 ```
 
@@ -208,8 +208,8 @@ Thanks to [@markdumay](http://github.com/markdumay) for his original work that t
 Thanks to [@mrmuiz](https://github.com/mrmuiz) for lots of testing across different Synology versions and great feedback
 
 ## License
-<a href="https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE" alt="License">
-    <img src="https://img.shields.io/github/license/telnetdoogie/synology-docker.svg" />
+<a href="https://github.com/mrkhachaturov/synology-docker/blob/master/LICENSE" alt="License">
+    <img src="https://img.shields.io/github/license/mrkhachaturov/synology-docker.svg" />
 </a>
 
 ## Origin
@@ -218,5 +218,4 @@ Forked from [telnetdoogie/synology-docker](https://github.com/telnetdoogie/synol
 [synology_url]: https://www.synology.com
 [synology_docker]: https://www.synology.com/en-us/dsm/packages/Docker
 [docker_url]: https://www.docker.com/
-[gist_mikado8231]: https://gist.github.com/Mikado8231/bf207a019373f9e539af4d511ae15e0d
 
