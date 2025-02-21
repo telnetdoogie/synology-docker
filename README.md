@@ -3,7 +3,7 @@
 
 
 # synology-docker
-| :page_facing_up: Originally forked from [markdumay/synology-docker](http://github.com/markdumay/synology-docker) |
+| :page_facing_up: Originally forked from [telnetdoogie/synology-docker](https://github.com/telnetdoogie/synology-docker) |
 | --- |
 
 
@@ -16,17 +16,17 @@
 
 <!-- Badges -->
 <p align="center">
-    <a href="https://github.com/telnetdoogie/synology-docker/commits/master" alt="Last commit">
-        <img src="https://img.shields.io/github/last-commit/telnetdoogie/synology-docker.svg" />
+    <a href="https://github.com/mrkhachaturov/synology-docker/commits/master" alt="Last commit">
+        <img src="https://img.shields.io/github/last-commit/mrkhachaturov/synology-docker.svg" />
     </a>
-    <a href="https://github.com/telnetdoogie/synology-docker/issues" alt="Issues">
-        <img src="https://img.shields.io/github/issues/telnetdoogie/synology-docker.svg" />
+    <a href="https://github.com/mrkhachaturov/synology-docker/issues" alt="Issues">
+        <img src="https://img.shields.io/github/issues/mrkhachaturov/synology-docker.svg" />
     </a>
-    <a href="https://github.com/telnetdoogie/synology-docker/pulls" alt="Pulls">
-        <img src="https://img.shields.io/github/issues-pr-raw/telnetdoogie/synology-docker.svg" />
+    <a href="https://github.com/mrkhachaturov/synology-docker/pulls" alt="Pulls">
+        <img src="https://img.shields.io/github/issues-pr-raw/mrkhachaturov/synology-docker.svg" />
     </a>
-    <a href="https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE" alt="License">
-        <img src="https://img.shields.io/github/license/telnetdoogie/synology-docker.svg" />
+    <a href="https://github.com/mrkhachaturov/synology-docker/blob/master/LICENSE" alt="License">
+        <img src="https://img.shields.io/github/license/mrkhachaturov/synology-docker.svg" />
     </a>
 </p>
 
@@ -52,7 +52,7 @@ Git automatically creates a new folder `synology-docker` and copies the files to
 change your current folder to the location of the script. (`cd synology-docker`) before running the script.
 
 ```console
-git clone https://github.com/telnetdoogie/synology-docker.git
+git clone https://github.com/mrkhachaturov/synology-docker.git
 cd synology-docker
 ```
 
@@ -100,8 +100,9 @@ To ensure a smooth update, it is highly recommended to follow these steps in ord
 
 3. Once all containers now use `local` logger, **run the `update` script** to update Docker and Docker Compose to the latest version.
    ```console
-   sudo ./syno_docker_update.sh update
+   sudo ./syno_docker_update.sh -d 27.5.1 -c 2.33.1 update  
    ```
+   This command updates Docker to version `27.5.1` and Docker Compose to `2.33.1`. Feel free to use alternative versions. If you omit the `-d` and/or `-c` flags, the script will attempt to install the latest available versions — but be aware that Docker `v28` is not yet recommended due to ongoing issues.
 
 4. If all containers were switched to the `local` logger before the update is complete, all containers should spin up as part of the update script.
 
@@ -199,24 +200,16 @@ This [link][known_issues] contains an overview of known issues, including availa
 2. Make and test the changes
 3. Submit a Pull Request with a comprehensive description of the changes back to this repository
 
-## Credits
-*Synology-Docker* is inspired by this [gist][gist_mikado8231] from Mikado8231.
-
-Thanks to [@markdumay](http://github.com/markdumay) for his original work that this was forked from.
-
-Thanks to [@mrmuiz](https://github.com/mrmuiz) for lots of testing across different Synology versions and great feedback
 
 ## License
-<a href="https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE" alt="License">
-    <img src="https://img.shields.io/github/license/telnetdoogie/synology-docker.svg" />
+<a href="https://github.com/mrkhachaturov/synology-docker/blob/master/LICENSE" alt="License">
+    <img src="https://img.shields.io/github/license/mrkhachaturov/synology-docker.svg" />
 </a>
 
 ## Origin
-Forked from [markdumay/synology-docker](http://github.com/markdumay/synology-docker)
-
+Forked from [telnetdoogie/synology-docker](https://github.com/telnetdoogie/synology-docker)
 <!-- MARKDOWN PUBLIC LINKS -->
 [synology_url]: https://www.synology.com
 [synology_docker]: https://www.synology.com/en-us/dsm/packages/Docker
 [docker_url]: https://www.docker.com/
-[gist_mikado8231]: https://gist.github.com/Mikado8231/bf207a019373f9e539af4d511ae15e0d
 
