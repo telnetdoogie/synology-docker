@@ -100,8 +100,9 @@ To ensure a smooth update, it is highly recommended to follow these steps in ord
 
 3. Once all containers now use `local` logger, **run the `update` script** to update Docker and Docker Compose to the latest version.
    ```console
-   sudo ./syno_docker_update.sh update
+   sudo ./syno_docker_update.sh -d 27.5.1 -c 2.33.1 update  
    ```
+   This command updates Docker to version `27.5.1` and Docker Compose to `2.33.1`. Feel free to use alternative versions. If you omit the `-d` and/or `-c` flags, the script will attempt to install the latest available versions — but be aware that Docker `v28` is not yet recommended due to ongoing issues.
 
 4. If all containers were switched to the `local` logger before the update is complete, all containers should spin up as part of the update script.
 
