@@ -213,8 +213,7 @@ Thanks to [@mrmuiz](https://github.com/mrmuiz) for lots of testing across differ
 </a>
 
 ## Origin
-Forked from [markdumay/synology-docker](http://github.com/markdumay/synology-docker)
-
+Forked from [telnetdoogie/synology-docker](https://github.com/telnetdoogie/synology-docker)
 <!-- MARKDOWN PUBLIC LINKS -->
 [synology_url]: https://www.synology.com
 [synology_docker]: https://www.synology.com/en-us/dsm/packages/Docker
