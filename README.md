@@ -16,17 +16,17 @@
 
 <!-- Badges -->
 <p align="center">
-    <a href="https://github.com/telnetdoogie/synology-docker/commits/master" alt="Last commit">
-        <img src="https://img.shields.io/github/last-commit/telnetdoogie/synology-docker.svg" />
+    <a href="https://github.com/mrkhachaturov/synology-docker/commits/master" alt="Last commit">
+        <img src="https://img.shields.io/github/last-commit/mrkhachaturov/synology-docker.svg" />
     </a>
-    <a href="https://github.com/telnetdoogie/synology-docker/issues" alt="Issues">
-        <img src="https://img.shields.io/github/issues/telnetdoogie/synology-docker.svg" />
+    <a href="https://github.com/mrkhachaturov/synology-docker/issues" alt="Issues">
+        <img src="https://img.shields.io/github/issues/mrkhachaturov/synology-docker.svg" />
     </a>
-    <a href="https://github.com/telnetdoogie/synology-docker/pulls" alt="Pulls">
-        <img src="https://img.shields.io/github/issues-pr-raw/telnetdoogie/synology-docker.svg" />
+    <a href="https://github.com/mrkhachaturov/synology-docker/pulls" alt="Pulls">
+        <img src="https://img.shields.io/github/issues-pr-raw/mrkhachaturov/synology-docker.svg" />
     </a>
-    <a href="https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE" alt="License">
-        <img src="https://img.shields.io/github/license/telnetdoogie/synology-docker.svg" />
+    <a href="https://github.com/mrkhachaturov/synology-docker/blob/master/LICENSE" alt="License">
+        <img src="https://img.shields.io/github/license/mrkhachaturov/synology-docker.svg" />
     </a>
 </p>
 
@@ -200,12 +200,6 @@ This [link][known_issues] contains an overview of known issues, including availa
 2. Make and test the changes
 3. Submit a Pull Request with a comprehensive description of the changes back to this repository
 
-## Credits
-*Synology-Docker* is inspired by this [gist][gist_mikado8231] from Mikado8231.
-
-Thanks to [@markdumay](http://github.com/markdumay) for his original work that this was forked from.
-
-Thanks to [@mrmuiz](https://github.com/mrmuiz) for lots of testing across different Synology versions and great feedback
 
 ## License
 <a href="https://github.com/mrkhachaturov/synology-docker/blob/master/LICENSE" alt="License">
