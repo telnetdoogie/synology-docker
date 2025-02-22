@@ -1,6 +1,5 @@
-| :warning: This has not been fully tested with Docker v28 yet. v28 has some serious issues and some big changes on networking... I suggest for now you limit updates to v27.5.1 and below. |
+| :warning: This has not been fully tested with Docker v28 yet. v28 has some serious issues and some big changes on networking. I STRONGLY suggest for now you limit updates to v27.5.1 and below, using `sudo ./syno_docker_update.sh -d 27.5.1 -c 2.33.0 update` |
 | --- |
-
 
 # synology-docker
 | :page_facing_up: Originally forked from [markdumay/synology-docker](http://github.com/markdumay/synology-docker) |
