@@ -53,10 +53,13 @@ readonly CPU_ARCH='x86_64'
 readonly DOWNLOAD_DOCKER="https://download.docker.com/linux/static/stable/${CPU_ARCH}"
 readonly DOWNLOAD_GITHUB='https://github.com/docker/compose'
 readonly GITHUB_API_COMPOSE='https://api.github.com/repos/docker/compose/releases/latest'
-[ -d "/var/packages/ContainerManager" ] && readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager' && \
-	readonly SYNO_DOCKER_SERV_NAME='ContainerManager'
-[ -d "/var/packages/Docker" ] && readonly SYNO_DOCKER_DIR='/var/packages/Docker' && \
-	readonly SYNO_DOCKER_SERV_NAME='pkgctl-Docker'
+if [ -d "/var/packages/ContainerManager" ]; then
+    readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager'
+    readonly SYNO_DOCKER_SERV_NAME='ContainerManager'
+elif [ -d "/var/packages/Docker" ]; then
+    readonly SYNO_DOCKER_DIR='/var/packages/Docker'
+    readonly SYNO_DOCKER_SERV_NAME='pkgctl-Docker'
+fi
 if [ -z "$SYNO_DOCKER_DIR" ]; then
     terminate "Docker (or ContainerManager) folder was not found."
 fi
