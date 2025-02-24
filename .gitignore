@@ -1,5 +1,6 @@
 # dockerbackup files
 docker_backup*.tgz
+*.bkup
 
 # dotenv environment variables file
 .env
