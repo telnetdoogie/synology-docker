@@ -263,6 +263,11 @@ case "$1" in
 
 		$MountShareHelper --mount-all
 
+        check_iptables=`iptables -L | grep "Chain FORWARD\|Chain DOCKER"`
+        logger -s -t Synology-Docker -p error "FORWARD and DOCKER chains after complete startup:"
+        logger -s -t Synology-Docker -p error $check_iptables
+
+
 		exit 0
 		;;
 
