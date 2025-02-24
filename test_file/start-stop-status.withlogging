@@ -205,10 +205,18 @@ case "$1" in
 		[ -d "${HookDir}" ] || mkdir -p "${HookDir}" && chmod 700 ${HookDir}
 		[ -d "${EventHookDir}" ] || mkdir -p "${EventHookDir}" && chmod 700 ${EventHookDir}
 
+        check_modules=`lsmod | grep iptable`
+
+        logger -s -t Synology-Docker -p error "iptables modules pre-iptablestool:"
+        logger -s -t Synology-Docker -p error $check_modules
+
 		# install modules
 		iptablestool --insmod "${DockerServName}" ${InsertModules}
 		
 		logger -s -t Synology-Docker -p error "iptables modules added in start-stop-status"
+        check_modules=`lsmod | grep iptable`
+        logger -s -t Synology-Docker -p error "iptables modules post-iptablestool:"
+        logger -s -t Synology-Docker -p error $check_modules
 		
 		$DockerUpdaterBin postinst updatedockerdconf "$(get_install_volume_type)"
 
@@ -216,13 +224,19 @@ case "$1" in
 		# start docker event watcherd
 		/usr/syno/bin/synosystemctl start "${DockerEventWatcherd}"
 		
-		logger -s -t Synology-Docker -p error "about to add FORWARD ACCEPT rule in start-stop-status"
+        check_iptables=`iptables -L | grep "Chain FORWARD\|Chain DOCKER"`
+        logger -s -t Synology-Docker -p error "FORWARD and DOCKER chains pre-FORWARD rule:"
+        logger -s -t Synology-Docker -p error $check_iptables
+        logger -s -t Synology-Docker -p error "about to add FORWARD ACCEPT rule in start-stop-status"
 
 		echo "adding FORWARD ACCEPT rule"
 		# Added by docker update
 		iptables -P FORWARD ACCEPT
 
 		logger -s -t Synology-Docker -p error "FORWARD ACCEPT rule added in start-stop-status"
+        check_iptables=`iptables -L | grep "Chain FORWARD\|Chain DOCKER"`
+        logger -s -t Synology-Docker -p error "FORWARD and DOCKER chains post-FORWARD rule:"
+        logger -s -t Synology-Docker -p error $check_iptables
 
 		# start docker
 		if ! start_docker_daemon; then
