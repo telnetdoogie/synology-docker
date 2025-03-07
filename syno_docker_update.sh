@@ -105,6 +105,7 @@ target_compose_version=''
 backup_filename_flag='false'
 step=0
 total_steps=0
+install_iptables_modules='false'
 
 
 #======================================================================================================================
@@ -514,6 +515,10 @@ define_update() {
         if [ "${docker_version}" = "${target_docker_version}" ] && \
             [ "${compose_version}" = "${target_compose_version}" ] ; then
             terminate_with_warning "Already on target version for Docker and Docker Compose"
+        fi
+        if [[ "${target_docker_version}" == 28* ]]; then
+          install_iptables_modules='true'
+          total_steps=$((total_steps+1))
         fi
         if [ "${docker_version}" = "${target_docker_version}" ] && [ "${skip_docker_update}" = 'false' ] ; then
             skip_docker_update='true'
@@ -1000,6 +1005,22 @@ execute_start_syno() {
 }
 
 #======================================================================================================================
+# Installs kernel modules for v28+
+#======================================================================================================================
+# Globals:
+#   - install_iptables_modules
+# Outputs:
+#   modules installed, start script modified (if necessary)
+#======================================================================================================================
+install_modules() {
+  print_status "Checking for / Installing iptables modules."
+  if [[ "${install_iptables_modules}" == 'true' ]]; then
+    echo "   Since you are upgrading to v28+ of docker, we'll need to install iptables modules"
+    ./install_iptables_modules.sh || terminate "Could not install iptables modules. Stopping." 
+  fi
+}
+
+#======================================================================================================================
 # Removes the temp folder.
 #======================================================================================================================
 # Globals:
@@ -1114,11 +1135,12 @@ main() {
             execute_download_compose
             ;;
         install )
-            total_steps=7
+            total_steps=8
             detect_current_versions
             execute_prepare
             define_target_download
             confirm_operation
+            install_modules
             execute_stop_syno
             execute_backup
             execute_extract_bin
@@ -1150,12 +1172,13 @@ main() {
             execute_start_syno
             ;;
         update )
-            total_steps=11
+            total_steps=12
             detect_current_versions
             execute_prepare
             define_target_version
             define_update
             confirm_operation
+            install_modules
             execute_download_bin
             execute_download_compose
             execute_stop_syno
