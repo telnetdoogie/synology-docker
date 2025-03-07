@@ -1140,9 +1140,9 @@ main() {
             execute_prepare
             define_target_download
             confirm_operation
+            execute_backup
             install_modules
             execute_stop_syno
-            execute_backup
             execute_extract_bin
             execute_install_bin
             execute_update_log
@@ -1179,10 +1179,10 @@ main() {
             define_update
             confirm_operation
             install_modules
+            execute_backup
             execute_download_bin
             execute_download_compose
             execute_stop_syno
-            execute_backup
             execute_extract_bin
             execute_install_bin
             execute_update_log
