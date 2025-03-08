@@ -908,7 +908,7 @@ execute_update_script() {
         
         # Search and check conditions
         if ! grep -q 'iptables -P FORWARD ACCEPT' "${file}"; then
-             match="^[[:space:]]*# start docker"
+            match="^[[:space:]]*# start docker[[:space:]]*$"
             # Use sed to append the lines before the match
             sed -i "/${match}/i\\${SYNO_DOCKER_SCRIPT_FORWARDING}" "${file}"
             echo "Added missing IP forwarding configuration to ${file}."
