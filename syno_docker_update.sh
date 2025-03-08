@@ -105,6 +105,7 @@ target_compose_version=''
 backup_filename_flag='false'
 step=0
 total_steps=0
+install_iptables_modules='false'
 
 
 #======================================================================================================================
@@ -515,6 +516,10 @@ define_update() {
             [ "${compose_version}" = "${target_compose_version}" ] ; then
             terminate_with_warning "Already on target version for Docker and Docker Compose"
         fi
+        if [[ "${target_docker_version}" == 28* ]]; then
+          install_iptables_modules='true'
+          total_steps=$((total_steps+1))
+        fi
         if [ "${docker_version}" = "${target_docker_version}" ] && [ "${skip_docker_update}" = 'false' ] ; then
             skip_docker_update='true'
             total_steps=$((total_steps-1))
@@ -903,9 +908,9 @@ execute_update_script() {
         
         # Search and check conditions
         if ! grep -q 'iptables -P FORWARD ACCEPT' "${file}"; then
-            match="^[[:space:]]*iptablestool --insmod"
-            # Use sed to append the lines after the match
-            sed -i "/${match}/a\\${SYNO_DOCKER_SCRIPT_FORWARDING}" "${file}"
+            match="^[[:space:]]*# start docker[[:space:]]*$"
+            # Use sed to append the lines before the match
+            sed -i "/${match}/i\\${SYNO_DOCKER_SCRIPT_FORWARDING}" "${file}"
             echo "Added missing IP forwarding configuration to ${file}."
         else
             echo "IP forwarding is already enabled in ${file}."
@@ -1000,6 +1005,22 @@ execute_start_syno() {
 }
 
 #======================================================================================================================
+# Installs kernel modules for v28+
+#======================================================================================================================
+# Globals:
+#   - install_iptables_modules
+# Outputs:
+#   modules installed, start script modified (if necessary)
+#======================================================================================================================
+install_modules() {
+  print_status "Checking for / Installing iptables modules."
+  if [[ "${install_iptables_modules}" == 'true' ]]; then
+    echo "   Since you are upgrading to v28+ of docker, we'll need to install iptables modules"
+    ./install_iptables_modules.sh || terminate "Could not install iptables modules. Stopping." 
+  fi
+}
+
+#======================================================================================================================
 # Removes the temp folder.
 #======================================================================================================================
 # Globals:
@@ -1079,7 +1100,7 @@ main() {
                 target="$1"
                 validate_target "Invalid target"
                 ;;
-            backup | restore | update | logger | validate )
+            backup | restore | update | logger | validate | only_script )
                 command="$1"
                 ;;
             download | install )
@@ -1097,6 +1118,10 @@ main() {
 
     # Execute workflows
     case "${command}" in
+        only_script )
+            total_steps=1
+            execute_update_script
+            ;;
         backup )
             total_steps=3
             detect_current_versions
@@ -1114,13 +1139,14 @@ main() {
             execute_download_compose
             ;;
         install )
-            total_steps=7
+            total_steps=8
             detect_current_versions
             execute_prepare
             define_target_download
             confirm_operation
-            execute_stop_syno
             execute_backup
+            install_modules
+            execute_stop_syno
             execute_extract_bin
             execute_install_bin
             execute_update_log
@@ -1150,16 +1176,17 @@ main() {
             execute_start_syno
             ;;
         update )
-            total_steps=11
+            total_steps=12
             detect_current_versions
             execute_prepare
             define_target_version
             define_update
             confirm_operation
+            install_modules
+            execute_backup
             execute_download_bin
             execute_download_compose
             execute_stop_syno
-            execute_backup
             execute_extract_bin
             execute_install_bin
             execute_update_log
