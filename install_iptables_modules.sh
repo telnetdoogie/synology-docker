@@ -16,8 +16,8 @@ INSERT="    # Added by docker update\n"
 INSERT="${INSERT}   # Load raw modules\n"
 INSERT="${INSERT}   insmod ${MODULES_FOLDER}/${IP4MODULE}\n"
 INSERT="${INSERT}   insmod ${MODULES_FOLDER}/${IP6MODULE}"
-KERNEL_VERSION=`uname -r`
-PLATFORM_VERSION=`/bin/get_key_value /etc.defaults/synoinfo.conf platform_name`
+KERNEL_VERSION=$(uname -r)
+PLATFORM_VERSION=$(/bin/get_key_value /etc.defaults/synoinfo.conf platform_name)
 IP4DL="https://raw.githubusercontent.com/telnetdoogie/synology-kernelmodules/main/compiled_modules/${KERNEL_VERSION}/${PLATFORM_VERSION}/${IP4MODULE}"
 IP6DL="https://raw.githubusercontent.com/telnetdoogie/synology-kernelmodules/main/compiled_modules/${KERNEL_VERSION}/${PLATFORM_VERSION}/${IP6MODULE}"
 
