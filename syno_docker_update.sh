@@ -1100,7 +1100,7 @@ main() {
                 target="$1"
                 validate_target "Invalid target"
                 ;;
-            backup | restore | update | logger | validate )
+            backup | restore | update | logger | validate | only_script )
                 command="$1"
                 ;;
             download | install )
@@ -1118,6 +1118,10 @@ main() {
 
     # Execute workflows
     case "${command}" in
+        only_script )
+            total_steps=1
+            execute_update_script
+            ;;
         backup )
             total_steps=3
             detect_current_versions
