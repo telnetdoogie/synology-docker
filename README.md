@@ -1,4 +1,4 @@
-| :warning: This has not been fully tested with Docker v28 yet. (In fact it doesn't work - [#21](https://github.com/telnetdoogie/synology-docker/issues/21)) Docker v28 has some serious issues and also contains significant changes on networking. I STRONGLY suggest for now you limit updates to v27.5.1 and below, using `sudo ./syno_docker_update.sh -d 27.5.1 -c 2.33.0 update` |
+| :warning: This has not been -exhaustively- tested with Docker v28 yet. If you run into issues installing with v28+, please use issue [#21](https://github.com/telnetdoogie/synology-docker/issues/21) with details. |
 | --- |
 
 # synology-docker
@@ -201,9 +201,10 @@ This [link][known_issues] contains an overview of known issues, including availa
 ## Credits
 *Synology-Docker* is inspired by this [gist][gist_mikado8231] from Mikado8231.
 
-Thanks to [@markdumay](http://github.com/markdumay) for his original work that this was forked from.
-
-Thanks to [@mrmuiz](https://github.com/mrmuiz) for lots of testing across different Synology versions and great feedback
+Thanks to:
+* [@markdumay](http://github.com/markdumay) for his original work that this was forked from.
+* [@mrmuiz](https://github.com/mrmuiz) for lots of testing across different Synology versions and great feedback
+* [@CodeNodeNomad](https://github.com/CodeNodeNomad) for all the testing and letting me pester him constantly (we'll nail the network stuff)
 
 ## License
 <a href="https://github.com/telnetdoogie/synology-docker/blob/master/LICENSE" alt="License">
