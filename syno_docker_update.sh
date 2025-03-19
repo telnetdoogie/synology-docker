@@ -1182,8 +1182,8 @@ main() {
             define_target_version
             define_update
             confirm_operation
-            install_modules
             execute_backup
+            install_modules
             execute_download_bin
             execute_download_compose
             execute_stop_syno
