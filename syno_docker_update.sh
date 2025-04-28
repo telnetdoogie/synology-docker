@@ -1126,9 +1126,7 @@ main() {
             total_steps=3
             detect_current_versions
             execute_prepare
-            execute_stop_syno
             execute_backup
-            execute_start_syno
             ;;
         download )
             total_steps=2
