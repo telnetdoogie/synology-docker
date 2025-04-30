@@ -148,8 +148,8 @@ Under the hood, the six different commands invoke a specific workflow or sequenc
 | A) | Download Docker binary      |        | Step 1   |         |         |        | Step 1  |
 | B) | Download Compose binary     |        | Step 2   |         |         |        | Step 2  |
 | C) | Extract files from backup   |        |          |         | Step 1  |        |         |
-| D) | Stop Docker daemon          | Step 1 |          | Step 1  | Step 2  | Step 1 | Step 3  |
-| E) | Backup current files        | Step 2 |          | Step 2  |         | Step 2 | Step 4  |
+| D) | Stop Docker daemon          |        |          | Step 1  | Step 2  | Step 1 | Step 3  |
+| E) | Backup current files        | Step 1 |          | Step 2  |         | Step 2 | Step 4  |
 | F) | Extract downloaded binaries |        |          | Step 3  |         |        | Step 5  |
 | G) | Restore Docker binaries     |        |          |         | Step 3  |        |         |
 | H) | Install Docker binaries     |        |          | Step 4  |         |        | Step 6  |
@@ -157,7 +157,7 @@ Under the hood, the six different commands invoke a specific workflow or sequenc
 | J) | Restore log driver          |        |          |         | Step 4  |        |         |
 | K) | Update Docker script        |        |          | Step 5  |         |        | Step 8  |
 | L) | Restore Docker script       |        |          |         | Step 5  |        |         |
-| M) | Start Docker daemon         | Step 3 |          | Step 6  | Step 6  | Step 4 | Step 9  |
+| M) | Start Docker daemon         |        |          | Step 6  | Step 6  | Step 4 | Step 9  |
 | N) | Clean temp folder           |        |          |         |         |        | Step 10 |
 
 * **A) Download Docker binary** - Downloads an archive containing Docker Engine binaries from `https://download.docker.com/linux/static/stable/x86_64/docker-${VERSION}.tgz`. The binaries are compatible with the Intel x86 (64 bit) architecture. Unless a specific version is specified by the `--docker` flag, *Synology-Docker* pulls the latest stable version available.
