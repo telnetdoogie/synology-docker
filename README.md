@@ -1,6 +1,3 @@
-| :warning: This has not been -exhaustively- tested with Docker v28 yet. If you run into issues installing with v28+, please use issue [#21](https://github.com/telnetdoogie/synology-docker/issues/21) with details. |
-| --- |
-
 # synology-docker
 | :page_facing_up: Originally forked from [markdumay/synology-docker](http://github.com/markdumay/synology-docker) |
 | --- |
