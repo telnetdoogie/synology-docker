@@ -12,7 +12,9 @@ for c in $(docker ps -q); do
 done
 
 # Sort the array based on the second field (compose location)
-IFS=$'\n' sorted_containers_info=($(printf "%s\n" "${containers_info[@]}" | sort -u -t " " -k 2))
+IFS=$'\n' sorted_containers_info=($(printf "%s\n" "${containers_info[@]}" | sort -t " " -k 2))
+# Original with -u - this unfortunately hides portainer containers.
+# IFS=$'\n' sorted_containers_info=($(printf "%s\n" "${containers_info[@]}" | sort -t -u " " -k 2))
 
 # Calculate the maximum length for the container names and compose locations
 max_container_length=0
