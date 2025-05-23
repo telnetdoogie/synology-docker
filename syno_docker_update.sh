@@ -106,6 +106,7 @@ backup_filename_flag='false'
 step=0
 total_steps=0
 install_iptables_modules='false'
+skip_iptables_modules='false'
 
 
 #======================================================================================================================
@@ -131,6 +132,8 @@ usage() {
     echo "  -p, --path PATH        Path of the backup (defaults to '${backup_dir}')"
     echo "  -s, --stage            Stage only, do not actually replace binaries or configuration of log driver"
     echo "  -t, --target           Target to update, either 'all' (default), 'engine', 'compose', or 'driver'"
+    echo "  --skip-iptables        Do not check for / install iptables modules"
+
     echo
     echo "Commands:"
     echo "  backup                 Create a backup of Docker and Docker Compose binaries and dockerd configuration"
@@ -516,7 +519,7 @@ define_update() {
             [ "${compose_version}" = "${target_compose_version}" ] ; then
             terminate_with_warning "Already on target version for Docker and Docker Compose"
         fi
-        if [[ "${target_docker_version}" == 28* ]]; then
+        if [[ "${target_docker_version}" == 28* && "${skip_iptables_modules}" = 'false' ]]; then
           install_iptables_modules='true'
           total_steps=$((total_steps+1))
         fi
@@ -1081,6 +1084,9 @@ main() {
                 ;;
             -f | --force )
                 force='true'
+                ;;
+            --skip-iptables )
+                skip_iptables_modules='true'
                 ;;
             -h | --help )
                 usage
