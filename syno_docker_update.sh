@@ -71,7 +71,10 @@ readonly SYNO_DOCKER_JSON_PATH="${SYNO_DOCKER_DIR}/etc"
 readonly SYNO_DOCKER_JSON="${SYNO_DOCKER_JSON_PATH}/dockerd.json"
 readonly SYNO_DOCKER_SCRIPT_FORWARDING="    		# Added by docker update\n	    	iptables -P FORWARD ACCEPT"
 readonly SYNO_SERVICE_STOP_TIMEOUT='10m'
-RUNNING_CONTAINERS=$(docker ps -q | awk 'NF' | wc -l)
+RUNNING_CONTAINERS=$(docker ps -q 2>/dev/null | awk 'NF' | wc -l)
+if [ $? -ne 0 ]; then
+    RUNNING_CONTAINERS=0
+fi
 if [ "$RUNNING_CONTAINERS" -gt 5 ]; then
     computed_timeout=$(( (RUNNING_CONTAINERS * 3) / 2 ))
     if [ "$computed_timeout" -lt 10 ]; then
