@@ -858,15 +858,15 @@ execute_extract_bin() {
 execute_extract_containerd() {
     if [ "${skip_containerd_update}" = 'false' ] ; then
         target_containerd_bin="containerd-static-${target_containerd_version}-linux-amd64.tar.gz"
-        print_status "Extracting target containerd binary (${download_dir}/${target_docker_bin})"
+        print_status "Extracting target containerd binary (${download_dir}/${target_containerd_bin})"
 
-        if [ ! -f "${download_dir}/${target_docker_bin}" ] ; then
-            terminate "Docker binary archive not found"
+        if [ ! -f "${download_dir}/${target_containerd_bin}" ] ; then
+            terminate "containerd archive not found"
         fi
 
         cd "${temp_dir}" || terminate "Temp directory does not exist"
-        tar -zxvf "${download_dir}/${target_docker_bin}"
-        if [ ! -d "docker" ] ; then
+        tar -zxvf "${download_dir}/${target_containerd_bin}"
+        if [ ! -d "containerd" ] ; then
             terminate "Files could not be extracted from archive"
         fi
     fi
@@ -1263,7 +1263,9 @@ main() {
             execute_prepare
             define_target_version
             execute_download_bin
+            execute_extract_bin
             execute_download_containerd
+            execute_extract_containerd
             execute_download_compose
             ;;
         install )
