@@ -374,9 +374,9 @@ validate_available_versions() {
 #======================================================================================================================
 validate_downloaded_versions() {
     # Test Docker archive is available on path
-    target_docker_bin="docker-${target_docker_version}.tgz"
-    if [ ! -f "${download_dir}/${target_docker_bin}" ] && [ "${skip_docker_update}" = 'false' ] ; then
-        terminate "Could not find Docker archive (${download_dir}/${target_docker_bin})"
+    target_containerd_bin="docker-${target_docker_version}.tgz"
+    if [ ! -f "${download_dir}/${target_containerd_bin}" ] && [ "${skip_docker_update}" = 'false' ] ; then
+        terminate "Could not find Docker archive (${download_dir}/${target_containerd_bin})"
     fi
 
     # Test Docker-compose binary is available on path
@@ -781,11 +781,33 @@ execute_backup() {
 #======================================================================================================================
 execute_download_bin() {
     if [ "${skip_docker_update}" = 'false' ] ; then
-        target_docker_bin="docker-${target_docker_version}.tgz"
-        print_status "Downloading target Docker binary (${DOWNLOAD_DOCKER}/${target_docker_bin})"
-        response=$(curl "${DOWNLOAD_DOCKER}/$target_docker_bin" --write-out '%{http_code}' \
-            -o "${download_dir}/${target_docker_bin}")
+        target_containerd_bin="docker-${target_docker_version}.tgz"
+        print_status "Downloading target Docker binary (${DOWNLOAD_DOCKER}/${target_containerd_bin})"
+        response=$(curl "${DOWNLOAD_DOCKER}/$target_containerd_bin" --write-out '%{http_code}' \
+            -o "${download_dir}/${target_containerd_bin}")
         if [ "${response}" != 200 ] ; then 
+            terminate "Binary could not be downloaded"
+        fi
+    fi
+}
+
+#======================================================================================================================
+# Downloads the targeted containerd binary archive, unless instructed to skip the download.
+#======================================================================================================================
+# Globals:
+#   - download_dir
+#   - skip_containerd_update
+#   - target_containerd_version
+# Outputs:
+#   A downloaded containerd archive, or a non-zero exit code if the download has failed.
+#======================================================================================================================
+execute_download_containerd() {
+    if [ "${skip_containerd_update}" = 'false' ] ; then
+        target_containerd_bin="containerd-static-${target_containerd_version}-linux-amd64.tar.gz"
+        print_status "Downloading target containerd binary (${DOWNLOAD_CONTAINERD}/download/v${target_containerd_version}/${target_containerd_bin})"
+        response=$(curl "${DOWNLOAD_CONTAINERD}/download/v${target_containerd_version}/$target_containerd_bin" --write-out '%{http_code}' \
+            -o "${download_dir}/${target_containerd_bin}")
+        if [ "${response}" != 200 ] ; then
             terminate "Binary could not be downloaded"
         fi
     fi
@@ -804,16 +826,45 @@ execute_download_bin() {
 #======================================================================================================================
 execute_extract_bin() {
     if [ "${skip_docker_update}" = 'false' ] ; then
-        target_docker_bin="docker-${target_docker_version}.tgz"
-        print_status "Extracting target Docker binary (${download_dir}/${target_docker_bin})"
+        target_containerd_bin="docker-${target_docker_version}.tgz"
+        print_status "Extracting target Docker binary (${download_dir}/${target_containerd_bin})"
 
-        if [ ! -f "${download_dir}/${target_docker_bin}" ] ; then
+        if [ ! -f "${download_dir}/${target_containerd_bin}" ] ; then
             terminate "Docker binary archive not found"
         fi
 
         cd "${temp_dir}" || terminate "Temp directory does not exist"
-        tar -zxvf "${download_dir}/${target_docker_bin}"
+        tar -zxvf "${download_dir}/${target_containerd_bin}"
         if [ ! -d "docker" ] ; then 
+            terminate "Files could not be extracted from archive"
+        fi
+    fi
+}
+
+
+#======================================================================================================================
+# Extracts a downloaded containerd binaries archive in the temp folder, unless instructed to skip the update.
+#======================================================================================================================
+# Globals:
+#   - download_dir
+#   - skip_containerd_update
+#   - target_containerd_version
+#   - temp_dir
+# Outputs:
+#   An extracted containerd binaries archive, or a non-zero exit code if the extraction has failed.
+#======================================================================================================================
+execute_extract_containerd() {
+    if [ "${skip_containerd_update}" = 'false' ] ; then
+        target_containerd_bin="containerd-static-${target_containerd_version}-linux-amd64.tar.gz"
+        print_status "Extracting target containerd binary (${download_dir}/${target_containerd_bin})"
+
+        if [ ! -f "${download_dir}/${target_containerd_bin}" ] ; then
+            terminate "containerd archive not found"
+        fi
+
+        cd "${temp_dir}" || terminate "Temp directory does not exist"
+        tar -zxvf "${download_dir}/${target_containerd_bin}"
+        if [ ! -d "containerd" ] ; then
             terminate "Files could not be extracted from archive"
         fi
     fi
