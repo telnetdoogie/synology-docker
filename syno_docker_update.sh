@@ -630,7 +630,7 @@ define_restore() {
 #   - skip_compose_update
 #======================================================================================================================
 define_target_version() {
-    detect_available_versionsi
+    detect_available_versions
     echo
     [ "${skip_docker_update}" = 'false' ] && echo "Target Docker version: ${target_docker_version:-Unknown}"
     [ "${skip_compose_update}" = 'false' ] && echo "Target Docker Compose version: ${target_compose_version:-Unknown}"
