@@ -1261,6 +1261,7 @@ main() {
             execute_prepare
             define_target_version
             execute_download_bin
+            execute_download_containerd
             execute_download_compose
             ;;
         install )
