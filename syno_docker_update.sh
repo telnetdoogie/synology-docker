@@ -49,10 +49,15 @@ readonly SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 readonly DSM_SUPPORTED_VERSION=6
 readonly DEFAULT_DOCKER_VERSION='20.10.11'
 readonly DEFAULT_COMPOSE_VERSION='2.1.1'
+readonly DEFAULT_CONTAINERD_VERSION='1.7.29'
 readonly CPU_ARCH='x86_64'
 readonly DOWNLOAD_DOCKER="https://download.docker.com/linux/static/stable/${CPU_ARCH}"
 readonly DOWNLOAD_GITHUB='https://github.com/docker/compose'
+readonly DOWNLOAD_CONTAINERD='https://github.com/containerd/containerd/releases'
+
+readonly GITHUB_API_CONTAINERD='https://api.github.com/repos/containerd/containerd/releases/latest'
 readonly GITHUB_API_COMPOSE='https://api.github.com/repos/docker/compose/releases/latest'
+
 if [ -d "/var/packages/ContainerManager" ]; then
     readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager'
     readonly SYNO_DOCKER_SERV_NAME='ContainerManager'
@@ -92,6 +97,8 @@ fi
 dsm_major_version=''
 docker_version=''
 compose_version=''
+containerd_version=''
+
 temp_dir="/tmp/docker_update"
 backup_dir="${PWD}"
 download_dir="${temp_dir}"
@@ -99,12 +106,14 @@ docker_backup_filename="docker_backup_$(date +%Y%m%d_%H%M%S).tgz"
 skip_docker_update='false'
 skip_compose_update='false'
 skip_driver_update='false'
+skip_containerd_update='false'
 force='false'
 stage='false'
 command=''
 target='all'
 target_docker_version=''
 target_compose_version=''
+target_containerd_version=''
 backup_filename_flag='false'
 step=0
 total_steps=0
@@ -236,6 +245,11 @@ validate_current_version() {
     if [ -z "${compose_version}" ] && [ "${skip_compose_update}" = 'false' ]; then
         terminate "Could not detect current Docker Compose version, use --force to override"
     fi
+
+    # Test containerd version is present, exit otherwise
+    if [ -z "${containerd_version}" ] && [ "${skip_containerd_update}" = 'false' ]; then
+        terminate "Could not detect current containerd version, use --force to override"
+    fi
 }
 
 #======================================================================================================================
@@ -264,10 +278,12 @@ detect_available_downloads() {
 # Globals:
 #   - target_docker_version
 #   - target_compose_version
+#   - target_containerd_version
 #   - skip_docker_update
 #   - skip_compose_update
+#   - skip_containerd_update
 # Outputs:
-#   Updated 'target_docker_version' and 'target_compose_version'.
+#   Updated 'target_docker_version', 'target_compose_version', and 'target_containerd_version'
 #======================================================================================================================
 detect_available_versions() {
     # Detect latest available Docker version
@@ -291,18 +307,37 @@ detect_available_versions() {
             target_compose_version="${DEFAULT_COMPOSE_VERSION}"
         fi
     fi
+
+    # Detect latest available stable containerd version (ignores release candidates)
+    if [ -z "${target_containerd_version}" ] && [ "${skip_containerd_update}" = 'false' ] ; then
+        target_containerd_version=$(
+            curl -s "${GITHUB_API_CONTAINERD}" \
+            | grep -Eo '"tag_name":\s*"v?[0-9]+\.[0-9]+\.[0-9]+"' \
+            | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+'
+        )
+
+        if [ -z "${target_containerd_version}" ] ; then
+            echo "Could not detect containerd versions available for download, setting default value"
+            target_containerd_version="${DEFAULT_CONTAINERD_VERSION}"
+        fi
+    fi
+
+
 }
 
 #======================================================================================================================
-# Validates the target versions for Docker and Docker Compose are defined, exits otherwise.
+# Validates the target versions for Docker, Docker Compose, and containerd are defined, exits otherwise.
 #======================================================================================================================
 # Globals:
 #   - target_docker_version
 #   - target_compose_version
+#   - target_containerd_version
 #   - skip_docker_update
 #   - skip_compose_update
+#   - skip_containerd_update
+#
 # Outputs:
-#   Terminates with non-zero exit code if target version is unavailable for either Docker or Docker Compose.
+#   Terminates with non-zero exit code if target version is unavailable for Docker, Docker Compose, or containerd
 #======================================================================================================================
 validate_available_versions() {
     # Test Docker is available for download, exit otherwise
@@ -314,6 +349,13 @@ validate_available_versions() {
     if [ -z "${target_compose_version}" ] && [ "${skip_compose_update}" = 'false' ] ; then
         terminate "Could not find Docker Compose binaries for downloading"
     fi
+
+    # Test containerd is available for download, exit otherwise
+    if [ -z "${target_containerd_version}" ] && [ "${skip_containerd_update}" = 'false' ] ; then
+        terminate "Could not find containerd binaries for downloading"
+    fi
+
+
 }
 
 #======================================================================================================================
@@ -341,6 +383,13 @@ validate_downloaded_versions() {
     if [ ! -f "${download_dir}/docker-compose" ] && [ "${skip_compose_update}" = 'false' ] ; then 
         terminate "Could not find Docker compose binary (${download_dir}/docker-compose)"
     fi
+
+    # Test containerd binary is available on path
+    target_containerd_bin=".tgz"
+    if [ ! -f "${download_dir}/${target_containerd_bin}" ] && [ "${skip_containerd_update}" = 'false' ] ; then
+        terminate "Could not find containerd binary (${download_dir}/${target_containerd_bin})"
+    fi
+
 }
 
 #======================================================================================================================
@@ -480,21 +529,25 @@ validate_target() {
         all ) 
             skip_docker_update='false'
             skip_compose_update='false'
+            skip_containerd_update='false'
             skip_driver_update='false'
             ;;
         engine )
             skip_docker_update='false'
             skip_compose_update='true'
+            skip_containerd_update='true'
             skip_driver_update='false'
             ;;
         compose )
             skip_docker_update='true'
             skip_compose_update='false'
+            skip_containerd_update='true'
             skip_driver_update='true'
             ;;
         driver )
             skip_docker_update='true'
             skip_compose_update='true'
+            skip_containerd_update='true'
             skip_driver_update='false'
             ;;
         * )
@@ -523,8 +576,9 @@ validate_target() {
 define_update() {
     if [ "${force}" != 'true' ] ; then
         if [ "${docker_version}" = "${target_docker_version}" ] && \
-            [ "${compose_version}" = "${target_compose_version}" ] ; then
-            terminate_with_warning "Already on target version for Docker and Docker Compose"
+            [ "${compose_version}" = "${target_compose_version}" ] && \
+            [ "${containerd_version}" = "${target_containerd_version}" ] ; then
+            terminate_with_warning "Already on target version for Docker, Docker Compose, and containerd"
         fi
         if [[ "${target_docker_version}" == 28* && "${skip_iptables_modules}" = 'false' ]]; then
           install_iptables_modules='true'
@@ -532,6 +586,10 @@ define_update() {
         fi
         if [ "${docker_version}" = "${target_docker_version}" ] && [ "${skip_docker_update}" = 'false' ] ; then
             skip_docker_update='true'
+            total_steps=$((total_steps-1))
+        fi
+        if [ "${containerd_version}" = "${target_containerd_version}" ] && [ "${skip_containerd_update}" = 'false' ] ; then
+            skip_containerd_update='true'
             total_steps=$((total_steps-1))
         fi
         if [ "${compose_version}" = "${target_compose_version}" ] && [ "${skip_compose_update}" = 'false' ]; then
@@ -572,9 +630,12 @@ define_restore() {
 #   - skip_compose_update
 #======================================================================================================================
 define_target_version() {
-    detect_available_versions
+    detect_available_versionsi
+    echo
     [ "${skip_docker_update}" = 'false' ] && echo "Target Docker version: ${target_docker_version:-Unknown}"
     [ "${skip_compose_update}" = 'false' ] && echo "Target Docker Compose version: ${target_compose_version:-Unknown}"
+    [ "${skip_containerd_update}" = 'false' ] && echo "Target containerd version: ${target_containerd_version:-Unknown}"
+
     validate_available_versions
 }
 
@@ -590,7 +651,8 @@ define_target_version() {
 define_target_download() {
     detect_available_downloads
     [ "${skip_docker_update}" = 'false' ] && echo "Target Docker version: ${target_docker_version:-Unknown}"
-    [ "${skip_compose_update}" = 'false' ] && echo "Target Docker Compose version: Unknown"
+    [ "${skip_compose_update}" = 'false' ] && echo "Target Docker Compose version: ${target_compose_version:-Unknown}"
+    [ "${skip_containerd_update}" = 'false' ] && echo "Target containerd version: ${target_containerd_version:-Unknown}"
     validate_downloaded_versions
 }
 
@@ -611,6 +673,7 @@ confirm_operation() {
         echo "WARNING! This will replace:"
         [ "${skip_docker_update}" = "false" ]  && echo "  - Docker Engine"
         [ "${skip_compose_update}" = "false" ] && echo "  - Docker Compose"
+        [ "${skip_containerd_update}" = "false" ] && echo "  - containerd"
         [ "${skip_driver_update}" = "false" ]  && echo "  - Docker daemon log driver"
         echo
 
