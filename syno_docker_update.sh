@@ -804,6 +804,7 @@ execute_download_bin() {
 execute_download_containerd() {
     if [ "${skip_containerd_update}" = 'false' ] ; then
         target_containerd_bin="containerd-static-${target_containerd_version}-linux-amd64.tar.gz"
+        echo "output will be ${target_containerd_bin}"
         print_status "Downloading target containerd binary (${DOWNLOAD_CONTAINERD}/download/v${target_containerd_version}/${target_containerd_bin})"
         response=$(curl "${DOWNLOAD_CONTAINERD}/download/v${target_containerd_version}/${target_containerd_bin}" --write-out '%{http_code}' \
             -o "${download_dir}/${target_containerd_bin}")
