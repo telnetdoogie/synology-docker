@@ -2,7 +2,7 @@
 
 #======================================================================================================================
 # Title         : syno_docker_update.sh
-# Date          : October 12th, 2024
+# Date          : November 9th, 2025
 # Usage         : sudo ./syno_docker_update.sh [OPTIONS] COMMAND
 # Repository    : https://github.com/telnetdoogie/synology-docker.git
 #======================================================================================================================
