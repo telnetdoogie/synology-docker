@@ -191,9 +191,13 @@ detect_current_versions() {
         compose_version=$(docker-compose -v 2>/dev/null | grep -Eo "[0-9]*.[0-9]*.[0-9]*," | cut -d',' -f 1)
     fi
 
+    containerd_version=$(containerd -version | grep -Eo "v[0-9]+.[0-9]+.[0-9]+" | cut -c 2-)
+
     echo "Current DSM version: ${dsm_version:-Unknown}"
     echo "Current Docker version: ${docker_version:-Unknown}"
     echo "Current Docker Compose version: ${compose_version:-Unknown}"
+    echo "Current containerd version: ${containerd_version:-Unknown}"
+
     if [ "${force}" != 'true' ] ; then
         validate_current_version
     fi
