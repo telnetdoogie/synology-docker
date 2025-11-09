@@ -808,6 +808,7 @@ execute_download_containerd() {
         print_status "Downloading target containerd binary (${DOWNLOAD_CONTAINERD}/download/v${target_containerd_version}/${target_containerd_bin})"
         response=$(curl "${DOWNLOAD_CONTAINERD}/download/v${target_containerd_version}/${target_containerd_bin}" --write-out '%{http_code}' \
             -o "${download_dir}/${target_containerd_bin}")
+        echo "response was ${response}"
         if [ "${response}" != 200 ] ; then
             terminate "Binary could not be downloaded"
         fi
