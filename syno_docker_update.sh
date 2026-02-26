@@ -52,6 +52,7 @@ readonly DEFAULT_COMPOSE_VERSION='2.1.1'
 readonly CPU_ARCH='x86_64'
 readonly DOWNLOAD_DOCKER="https://download.docker.com/linux/static/stable/${CPU_ARCH}"
 readonly DOWNLOAD_GITHUB='https://github.com/docker/compose'
+readonly PINNED_RUNC='https://github.com/opencontainers/runc/releases/download/v1.3.2/runc.amd64'
 readonly GITHUB_API_COMPOSE='https://api.github.com/repos/docker/compose/releases/latest'
 if [ -d "/var/packages/ContainerManager" ]; then
     readonly SYNO_DOCKER_DIR='/var/packages/ContainerManager'
@@ -124,8 +125,8 @@ skip_iptables_modules='false'
 # Outputs:
 #   Writes message to stdout.
 #======================================================================================================================
-usage() { 
-    echo "Usage: $0 [OPTIONS] COMMAND" 
+usage() {
+    echo "Usage: $0 [OPTIONS] COMMAND"
     echo
     echo "Options:"
     echo "  -b, --backup NAME      Name of the backup (defaults to 'docker_backup_YYMMDDHHMMSS.tgz')"
@@ -317,7 +318,7 @@ validate_available_versions() {
 }
 
 #======================================================================================================================
-# Validates downloaded files for Docker and Docker Compose are available on the download path. The Docker binaries are 
+# Validates downloaded files for Docker and Docker Compose are available on the download path. The Docker binaries are
 # expected to be present as tar archive, whilst Docker compose should be a single binary file. The script exits if
 # either file is missing.
 #======================================================================================================================
@@ -338,13 +339,13 @@ validate_downloaded_versions() {
     fi
 
     # Test Docker-compose binary is available on path
-    if [ ! -f "${download_dir}/docker-compose" ] && [ "${skip_compose_update}" = 'false' ] ; then 
+    if [ ! -f "${download_dir}/docker-compose" ] && [ "${skip_compose_update}" = 'false' ] ; then
         terminate "Could not find Docker compose binary (${download_dir}/docker-compose)"
     fi
 }
 
 #======================================================================================================================
-# Validates if a provided version string conforms to the expected SemVer pattern. The pattern should resemble 
+# Validates if a provided version string conforms to the expected SemVer pattern. The pattern should resemble
 # 'major.minor.revision'. For example, '6.2.3' is a valid version string, while '6.1' is not.
 #======================================================================================================================
 # Arguments:
@@ -362,7 +363,7 @@ validate_version_input() {
 }
 
 #======================================================================================================================
-# Verifies if the provided filename for the Docker backup is provided, exists otherwise. The backup directory and 
+# Verifies if the provided filename for the Docker backup is provided, exists otherwise. The backup directory and
 # backup filename are updated if the filename contains a path.
 #======================================================================================================================
 # Globals:
@@ -387,7 +388,7 @@ validate_backup_filename() {
     if [ -z "${basepath}" ] || [ "${basepath}" != "." ]; then
         abs_path_and_file=$(readlink -f "${docker_backup_filename}")
         backup_dir=$(dirname "${abs_path_and_file}")
-        docker_backup_filename=$(basename "${abs_path_and_file}") 
+        docker_backup_filename=$(basename "${abs_path_and_file}")
     fi
 }
 
@@ -401,7 +402,7 @@ validate_backup_filename() {
 #   $1 - Error message when path is not specified
 #   $2 - Error message when path is not found
 # Outputs:
-#   Terminates with non-zero exit code if the provided download path is missing or unavailable. Formats the download 
+#   Terminates with non-zero exit code if the provided download path is missing or unavailable. Formats the download
 #   directory as absolute path.
 #======================================================================================================================
 validate_provided_download_path() {
@@ -424,7 +425,7 @@ validate_provided_download_path() {
 
 #======================================================================================================================
 # Verifies if the provided backup directory is provided and available, exists otherwise. The backup directory should
-# also differ from the temp path, to avoid accidentaly removing the backup files. The backup directory is formatted as 
+# also differ from the temp path, to avoid accidentaly removing the backup files. The backup directory is formatted as
 # absolute path.
 #======================================================================================================================
 # Globals:
@@ -434,7 +435,7 @@ validate_provided_download_path() {
 #   $2 - Error message when path is not found
 #   $3 - Error message when backup path equals temp directory
 # Outputs:
-#   Terminates with non-zero exit code if the provided backup path is missing, unavailable, or invalid. Formats the 
+#   Terminates with non-zero exit code if the provided backup path is missing, unavailable, or invalid. Formats the
 #   backup directory as absolute path.
 #======================================================================================================================
 validate_provided_backup_path() {
@@ -477,7 +478,7 @@ validate_provided_backup_path() {
 #======================================================================================================================
 validate_target() {
     case "${target}" in
-        all ) 
+        all )
             skip_docker_update='false'
             skip_compose_update='false'
             skip_driver_update='false'
@@ -505,7 +506,7 @@ validate_target() {
 
 #======================================================================================================================
 # Validates if the target version for either Docker or Docker Compose is newer than the currently installed version.
-# Terminates the script if both Docker and Docker Compose are already up to date, unless an update is forced. 
+# Terminates the script if both Docker and Docker Compose are already up to date, unless an update is forced.
 # Individual updates for either Docker or Docker Compose are skipped if they are already update to date, unless forced.
 #======================================================================================================================
 # Globals:
@@ -539,7 +540,7 @@ define_update() {
             skip_compose_update='true'
             total_steps=$((total_steps-1))
         fi
-        
+
         log_driver=$(jq -r '.["log-driver"] // empty' "${SYNO_DOCKER_JSON}")
         if [ "$log_driver" = "local" ]; then
           skip_driver_update='true'
@@ -563,7 +564,7 @@ define_restore() {
 }
 
 #======================================================================================================================
-# Defines the target versions for Docker and Docker Compose. See detect_available_versions() and 
+# Defines the target versions for Docker and Docker Compose. See detect_available_versions() and
 # validate_available_versions() for additional information.
 #======================================================================================================================
 # Globals:
@@ -580,7 +581,7 @@ define_target_version() {
 }
 
 #======================================================================================================================
-# Identifies the version of a downloaded Docker archive. See detect_available_downloads() for additional 
+# Identifies the version of a downloaded Docker archive. See detect_available_downloads() for additional
 # information.
 #======================================================================================================================
 # Globals:
@@ -723,7 +724,7 @@ execute_download_bin() {
         print_status "Downloading target Docker binary (${DOWNLOAD_DOCKER}/${target_docker_bin})"
         response=$(curl "${DOWNLOAD_DOCKER}/$target_docker_bin" --write-out '%{http_code}' \
             -o "${download_dir}/${target_docker_bin}")
-        if [ "${response}" != 200 ] ; then 
+        if [ "${response}" != 200 ] ; then
             terminate "Binary could not be downloaded"
         fi
     fi
@@ -751,8 +752,18 @@ execute_extract_bin() {
 
         cd "${temp_dir}" || terminate "Temp directory does not exist"
         tar -zxvf "${download_dir}/${target_docker_bin}"
-        if [ ! -d "docker" ] ; then 
+        if [ ! -d "docker" ] ; then
             terminate "Files could not be extracted from archive"
+        fi
+
+        # override runc binary on Kernels 5+ is present
+        if uname -r | grep -q '^5\.'; then
+            print_status "Detected Kernel v5, downloading / pinning runc version."
+            response=$(curl -L "${PINNED_RUNC}" --write-out '%{http_code}' -o "${temp_dir}/docker/runc")
+            if [ "${response}" != 200 ] ; then
+                terminate "runc binary could not be downloaded"
+            fi
+            chmod +x "${temp_dir}/docker/runc"
         fi
     fi
 }
