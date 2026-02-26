@@ -42,6 +42,7 @@ If you’re comfortable with SSH and `sudo`, this is for you.
 
 > **This is not supported by Synology.**
 > You can absolutely break things if you ignore instructions. Always have backups.
+> Once upgraded, The ContainerManager UI will no longer work reliably for managing containers or observing logs.
 
 ### Nvidia users
 
