@@ -193,11 +193,13 @@ detect_current_versions() {
     fi
 
     containerd_version=$(containerd -version | grep -Eo "v[0-9]+.[0-9]+.[0-9]+" | cut -c 2-)
+    runc_version=$(runc -version | grep -Eo "v[0-9]+.[0-9]+.[0-9]+" | cut -c 2-)
 
     echo "Current DSM version: ${dsm_version:-Unknown}"
     echo "Current Docker version: ${docker_version:-Unknown}"
     echo "Current Docker Compose version: ${compose_version:-Unknown}"
     echo "Current containerd version: ${containerd_version:-Unknown}"
+    echo "Current runc version: ${runc_version:-Unknown}"
 
     if [ "${force}" != 'true' ] ; then
         validate_current_version
