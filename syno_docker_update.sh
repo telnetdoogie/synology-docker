@@ -59,7 +59,7 @@ if [ -d "/var/packages/ContainerManager" ]; then
     readonly SYNO_DOCKER_SERV_NAME='ContainerManager'
 elif [ -d "/var/packages/Docker" ]; then
     readonly SYNO_DOCKER_DIR='/var/packages/Docker'
-    readonly SYNO_DOCKER_SERV_NAME='pkgctl-Docker'
+    readonly SYNO_DOCKER_SERV_NAME='Docker'
 fi
 if [ -z "$SYNO_DOCKER_DIR" ]; then
     terminate "Docker (or ContainerManager) folder was not found."
@@ -683,7 +683,7 @@ execute_stop_syno() {
                 fi
                 ;;
             *)
-                echo "ERROR: Cannot start Docker package, unsupported DSM version: ${dsm_major_version}"
+                echo "ERROR: Cannot stop Docker package, unsupported DSM version: ${dsm_major_version}"
         esac
     else
         echo "Skipping Docker service control in STAGE mode"
