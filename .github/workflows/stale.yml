@@ -7,7 +7,7 @@ name: Mark stale issues and pull requests
 
 on:
   schedule:
-  - cron: '36 9 * * *'
+  - cron: '21 0,6,12,18 * * *'
   workflow_dispatch: # Allows manual triggering of this workflow.
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
     - uses: actions/stale@v5
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        days-before-stale: 14
+        days-before-stale: 10
         stale-issue-message: 'This issue has been marked as stale and will be closed'
         close-issue-message: 'This issue has been closed for inactivity'
         stale-pr-message: 'This PR has been marked as stale and will be closed'
