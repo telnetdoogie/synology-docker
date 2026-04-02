@@ -7,8 +7,6 @@ jobs:
   close-issues:
     runs-on: ubuntu-latest
     permissions:
-      actions: write
-      contents: write
       issues: write
       pull-requests: write
     steps:
