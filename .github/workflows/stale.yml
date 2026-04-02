@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/stale@v10.2.0
         with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           days-before-stale: 7
           days-before-close: 3
           stale-issue-label: "stale"
