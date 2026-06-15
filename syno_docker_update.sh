@@ -16,7 +16,7 @@
 #   Writes error message to stderr, non-zero exit code.
 #======================================================================================================================
 terminate() {
-  printf "${RED}${BOLD}%s${NC}\n" "ERROR: $1"
+  printf "${RED}${BOLD}%s${NC}\n" "ERROR: $1" >&2
   exit 1
 }
 
@@ -660,6 +660,32 @@ resolve_syno_bin() {
 }
 
 #======================================================================================================================
+# Fails fast if the Synology package-control tool needed to stop/start the Docker package ('synopkg' on DSM 7,
+# 'synoservicectl' on DSM 6) is not resolvable - rather than only discovering this midway through a run, when
+# execute_stop_syno/execute_start_syno are reached.
+#======================================================================================================================
+# Globals:
+#   - dsm_major_version
+#   - stage
+# Outputs:
+#   Terminates with a non-zero exit code if the required tool cannot be resolved, unless 'stage' is true.
+#======================================================================================================================
+validate_syno_tools() {
+  if [ "${stage}" = 'true' ] ; then
+    return
+  fi
+
+  case "${dsm_major_version}" in
+    "6")
+      resolve_syno_bin "synoservicectl" "${SYNOSERVICECTL_BIN}" >/dev/null
+      ;;
+    "7")
+      resolve_syno_bin "synopkg" "${SYNOPKG_BIN}" >/dev/null
+      ;;
+  esac
+}
+
+#======================================================================================================================
 # Workflow Functions
 #======================================================================================================================
 
@@ -1203,6 +1229,7 @@ main() {
     install )
       total_steps=8
       detect_current_versions
+      validate_syno_tools
       execute_prepare
       define_target_download
       confirm_operation
@@ -1218,6 +1245,7 @@ main() {
     restore )
       total_steps=6
       detect_current_versions
+      validate_syno_tools
       execute_prepare
       define_restore
       confirm_operation
@@ -1231,6 +1259,7 @@ main() {
     logger )
       total_steps=4
       detect_current_versions
+      validate_syno_tools
       execute_prepare
       execute_stop_syno
       execute_backup
@@ -1240,6 +1269,7 @@ main() {
     update )
       total_steps=12
       detect_current_versions
+      validate_syno_tools
       execute_prepare
       define_target_version
       define_update
